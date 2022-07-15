@@ -54,8 +54,11 @@ class AuthService extends CrudService
         if(!Hash::check($request->password,$user->password) ){
             throw(new Exception('Contraseña incorrecta'));
         }
+        $token = $user->createToken('login')->plainTextToken;
+        $pos = strpos($token,'|');
+        $token = substr($token,$pos+1);
         $json = [
-            'token' => $user->createToken('login')->plainTextToken,
+            'token' => $token,
             'name'  => $user->first_name,
             'role'  => 1
         ];
