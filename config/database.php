@@ -72,7 +72,7 @@ return [
             'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', '5432'),
             //'database' => env('DB_DATABASE', 'forge'),
-            'database' => ltrim($DATABASE_URL["path"], "/"),
+            'database' => env('APP_ENV') == 'local' ? env('DB_DATABASE', 'forge'):ltrim($DATABASE_URL["path"], "/"),
             'username' => env('DB_USERNAME', 'forge'),
             'password' => env('DB_PASSWORD', ''),
             'charset' => 'utf8',
