@@ -51,7 +51,7 @@ class AuthService extends CrudService
     public function login(Request $request){
         $user = $this->repository->login($request->email);
 
-        if(!Hash::check($request->password,$user->password) ){
+        if (!Auth::attempt($request->only('email', 'password'))) {
             throw(new Exception('Contraseña incorrecta'));
         }
         $token = $user->createToken('login')->plainTextToken;

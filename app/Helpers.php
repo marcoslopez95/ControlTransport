@@ -6,15 +6,13 @@ if(!function_exists('custom_response')){
     function custom_response($success = true, $message = 'Operación Exitosa', $data = [], $code = 200)
     {
 
-        try{
+        $count = 1;
+        if(gettype($data) == 'array'){
             $count = count($data);
-        }catch(\Exception $e){
-            if(gettype($data) == 'string'){
-                $count = 0;
-            }
-            $count = 1;
         }
-
+        if(gettype($data) == 'string'){
+            $count = 0;
+        }
         $json = [
             'success' => $success,
             'message' => $message,
