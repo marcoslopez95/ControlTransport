@@ -16,7 +16,7 @@ class CrudRepository
 {
     protected $model;
     public $data = [];
-
+    protected $object;
     public function __construct($model = null)
     {
         /** @var CrudModel model */
@@ -31,96 +31,30 @@ class CrudRepository
 
     public function _show($id)
     {
-        return $this->model::find($id);
+        $this->object = $this->model::findOrFail($id);
+        return $this->object;
     }
 
     /**
      * @param $data
      * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model
      */
-    public function _store(Request $data)
+    public function _store(array $data)
     {
-        if (count($this->data) == 0) {
-            $this->data = ( $data instanceof Request) ?  $data->all() : $data ;
-        }
-        return $this->model::query()->create($this->data);
+        return $this->model::create($data);
     }
 
-    public function _update($id, $data)
+    public function _update($id, array $data)
     {
-
-        $object = $this->model::findOrFail($id);
-        $data = ( $data instanceof Request) ?  $data->all() : $data ;
-        $object->update($data);
-        if($object)
-            return $object;
-        else
-            return null;
-
+        self::_show($id);
+        $this->object->update($data);
+        self::_show($id);
+        return $this->object;
     }
 
-    public function _delete($id){
-        try{
-            $object = $this->model::findOrFail($id);
-            $object->delete();
-            return response()->json(['message' => 'deleted'],200);
-
-        }catch(\Exception $e){
-            return ['status' => 500,
-                    'message' => $e->getMessage()];
-        }
-
+    public function _destroy($id){
+        self::_show($id);
+        return $this->object->delete();
     }
 
-    public function errorException(\Exception $e)
-    {
-        Log::critical("Error, archivo del peo: {$e->getFile()}, linea del peo: {$e->getLine()}, el peo: {$e->getMessage()}");
-        return response()->json([
-            "message" => "Error de servidor",
-            "exception" => $e->getMessage(),
-            "file" => $e->getFile(),
-            "line" => $e->getLine(),
-            "code" => $e->getCode(),
-            // "error" => $this->runError()
-        ], 500);
-    }
-
-    /* public function exceptionPdo(\Exception $e, $value =  null)
-     {
-
-     }*/
-
-    public function select($select)
-    {
-        $query = $this->model::select($select);
-        return $query->get();
-    }
-
-    public function saveModel($model, $data)
-    {
-        if($data instanceof Request)
-            $data = $data->all();
-
-        if($new = $model::create($data)){
-            return $new;
-        }
-        return null;
-    }
-
-    public function getModel(){
-        return $this->model;
-    }
-
-    public function find($id){
-        return $this->model::find($id);
-    }
-    /**
-     * @named getQueryString() Funcion para obtener el Sql Plano
-     * @param Builder $cadena
-     * @return string
-     */
-    public function getQueryString(Builder $cadena){
-        $sql = str_replace('?', "'?'", $cadena->toSql());
-        return vsprintf(str_replace('?', '%s', $sql), $cadena->getBindings());
-    }
 }

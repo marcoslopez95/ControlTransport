@@ -11,9 +11,12 @@ namespace App\Core;
 
 use App\Traits\ApiResponse;
 use App\Traits\ManageRoles;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Validation\UnauthorizedException;
 use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
@@ -38,6 +41,7 @@ class CrudController extends BaseController
 
     public function _index(Request $request)
     {
+
         try{
             $data = $this->service->_index($request);
         }catch(\Exception $e){
@@ -48,16 +52,26 @@ class CrudController extends BaseController
 
     public function _show($id)
     {
-        return $this->service->_show($id);
+        try{
+            $data = $this->service->_show($id);
+            return custom_response(true, 'Show con éxito',$data);
+        }catch(Exception $e){
+            return custom_error($e,$e->getMessage());
+        }
     }
 
     public function _store(Request $request)
     {
-        $validator = Validator::make($request->all(), array_merge($this->validateStore, $this->validateDefault), $this->messages);
-        if ($validator->fails()) {
-            return response()->json(["error" => true, "message" => $this->parseMessageBag($validator->getMessageBag())], 422);
+        DB::beginTransaction();
+        try{
+            $data = $this->service->_store($request);
+            DB::commit();
+            Log::info('[created] '.$data);
+            return custom_response(true, 'Creado con éxito',$data,201);
+        }catch(Exception $e){
+            DB::rollback();
+            return custom_error($e,$e->getMessage());
         }
-        return $this->service->_store($request);
     }
 
 
@@ -68,33 +82,30 @@ class CrudController extends BaseController
      */
     public function _update($id, Request $request)
     {
-
-        $validator = Validator::make($request->all(), array_merge($this->validateUpdate, $this->validateDefault), $this->messages);
-        if ($validator->fails()) {
-            return response()->json(["error" => true, "message" => $this->parseMessageBag($validator->getMessageBag())], 422);
+        DB::beginTransaction();
+        try{
+            $data = $this->service->_update($id, $request);
+            DB::commit();
+            Log::info('[updated] '. $data);
+            return custom_response(true, 'Editado con éxito',$data,205);
+        }catch(Exception $e){
+            DB::rollback();
+            return custom_error($e,$e->getMessage());
         }
-        return $this->service->_update($id, $request);
     }
 
     public function _destroy($id, Request $request)
     {
-        return $this->service->_destroy($id, $request);
-    }
-
-    public function _delete($id)
-    {
-        return $this->service->_delete($id);
-    }
-
-    public function parseMessageBag($messageBag)
-    {
-        return array_merge(array_values($messageBag->getMessages()));
-    }
-
-    public function isAdmin($request)
-    {
-        if (!$this->haveRoles($request, 'admin', 'sysadmin', 'superadmin')) {
-            throw new UnauthorizedException('unauthorized');
+        DB::beginTransaction();
+        try{
+            $data = $this->service->_destroy($id, $request);
+            DB::commit();
+            Log::info('[deleted] '.$data);
+            return custom_response(true, 'Eliminado con éxito',$data,202);
+        }catch(Exception $e){
+            DB::rollback();
+            return custom_error($e,$e->getMessage());
         }
     }
+
 }

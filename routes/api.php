@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Partner\PartnerController;
 use App\Http\Controllers\User\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -37,3 +38,5 @@ Route::get('roles/{id}', [\App\Http\Controllers\Role\RoleController::class,'_sho
 Route::post('roles', [\App\Http\Controllers\Role\RoleController::class,'_store']);
 Route::put('roles/{id}', [\App\Http\Controllers\Role\RoleController::class,'_update']);
 Route::delete('roles/{id}', [\App\Http\Controllers\Role\RoleController::class,'_destroy']);
+
+Route::apiResource('partners',PartnerController::class);
