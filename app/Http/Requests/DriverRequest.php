@@ -35,7 +35,7 @@ class DriverRequest extends FormRequest
             return [
                 'first_name' => 'required|string',
                 'last_name'  => 'required|string',
-                'ci'         => ['required',Rule::unique('drivers')->ignore($this->drive)]
+                'ci'         => ['required',Rule::unique('drivers')->ignore($this->driver)]
             ];
         }
     }
