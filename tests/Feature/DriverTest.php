@@ -2,20 +2,19 @@
 
 namespace Tests\Feature;
 
-use App\Models\Partner;
+use App\Models\Driver;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
-class SocioTest extends TestCase
+class DriverTest extends TestCase
 {
-
     use RefreshDatabase;
 
-    public function test_socio_can_be_created(){
+    public function test_driver_can_be_created(){
         $this->withoutExceptionHandling();
 
-        $response = $this->postJson('/api/partners',[
+        $response = $this->postJson('/api/drivers',[
             'first_name' => 'Marcos',
             'last_name'  => 'López',
             'ci'         => '123123123'
@@ -29,33 +28,33 @@ class SocioTest extends TestCase
                     'success' => true
                 ]);
 
-        $partner = Partner::first();
+        $partner = Driver::first();
 
-        $this->assertCount(1,Partner::all());
+        $this->assertCount(1,Driver::all());
         $this->assertEquals($partner->first_name,'Marcos');
     }
 
     public function test_list_can_be_retrieved(){
         $this->withoutExceptionHandling();
-        Partner::factory(5)->create();
+        Driver::factory(5)->create();
 
-        $response = $this->getJson('api/partners');
+        $response = $this->getJson('api/drivers');
         $response->assertOk()
             ->assertJsonFragment([
             'success' => true
         ]);
 
-        $partners = Partner::all();
+        $drivers = Driver::all();
 
-        $response->assertJsonPath('data',$partners->toArray());
+        $response->assertJsonPath('data',$drivers->toArray());
     }
 
-    public function test_partner_can_be_show(){
+    public function test_driver_can_be_show(){
         $this->withoutExceptionHandling();
 
-        Partner::factory(1)->create();
-        $partner = Partner::first();
-        $response = $this->get('api/partners/'.$partner->id);
+        Driver::factory(1)->create();
+        $partner = Driver::first();
+        $response = $this->get('api/drivers/'.$partner->id);
         $response->assertOk()
             ->assertJsonFragment([
             'success' => true
@@ -64,10 +63,10 @@ class SocioTest extends TestCase
         $response->assertJsonPath('data',$partner->toArray());
     }
 
-    public function test_partner_can_be_updated(){
+    public function test_driver_can_be_updated(){
         $this->withoutExceptionHandling();
-        $partner = Partner::factory(1)->create();
-        $response = $this->putJson('api/partners/'.$partner[0]->id,[
+        $partner = Driver::factory(1)->create();
+        $response = $this->putJson('api/drivers/'.$partner[0]->id,[
             'first_name' => 'Marcos',
             'last_name'  => 'Lopez',
             'ci'         => '123'
@@ -77,31 +76,31 @@ class SocioTest extends TestCase
                     'success' => true
                 ]);
 
-        $partner_bd = Partner::first();
+        $partner_bd = Driver::first();
 
         $this->assertEquals($partner_bd->first_name, 'Marcos');
         $this->assertEquals($partner_bd->last_name, 'Lopez');
         $this->assertEquals($partner_bd->ci, '123');
     }
 
-    public function test_partner_can_be_deleted(){
+    public function test_driver_can_be_deleted(){
         $this->withoutExceptionHandling();
-        $partner = Partner::factory(1)->create();
+        $partner = Driver::factory(1)->create();
         $id = $partner[0]->id;
-        $response = $this->deleteJson('api/partners/'.$id);
+        $response = $this->deleteJson('api/drivers/'.$id);
         $response->assertStatus(202)
                 ->assertJsonFragment([
                     'success' => true
                 ]);
 
-        $partner_bd = Partner::find($id);
+        $partner_bd = Driver::find($id);
 
         $this->assertEquals($partner_bd, '');
     }
 
-    public function test_fields_required_to_save_partner(){
+    public function test_fields_required_to_save_driver(){
         //$this->withoutExceptionHandling();
-        $response = $this->postJson('api/partners',[]);
+        $response = $this->postJson('api/drivers',[]);
 
         $response->assertStatus(422)
                 ->assertJsonFragment([
@@ -109,14 +108,14 @@ class SocioTest extends TestCase
                 ]);
     }
 
-    public function test_unique_ci_in_partners(){
-        Partner::create([
+    public function test_unique_ci_in_drivers(){
+        Driver::create([
             'first_name' => 'Nombre',
             'last_name'  => 'Apellido',
             'ci'         => '123'
         ]);
 
-        $response = $this->postJson('api/partners',[
+        $response = $this->postJson('api/drivers',[
             'first_name'    => 'Marcos',
             'last_name'     => 'Lopez',
             'ci'            => '123'
@@ -128,14 +127,14 @@ class SocioTest extends TestCase
             ]);
     }
 
-    public function test_fields_required_to_update_partner(){
+    public function test_fields_required_to_update_driver(){
         //$this->withoutExceptionHandling();
-        Partner::create([
+        Driver::create([
             'first_name' => 'Nombre',
             'last_name'  => 'Apellido',
             'ci'         => '123'
         ]);
-        $response = $this->putJson('api/partners/1',[]);
+        $response = $this->putJson('api/drivers/1',[]);
 
         $response->assertStatus(422)
                 ->assertJsonFragment([
@@ -143,19 +142,19 @@ class SocioTest extends TestCase
                 ]);
     }
 
-    public function test_unique_ci_in_update_partner(){
-        Partner::create([
+    public function test_unique_ci_in_update_driver(){
+        Driver::create([
             'first_name' => 'Nombre',
             'last_name'  => 'Apellido',
             'ci'         => '123'
         ]);
-        Partner::create([
+        Driver::create([
             'first_name' => 'Nombre',
             'last_name'  => 'Apellido',
             'ci'         => '312'
         ]);
 
-        $response = $this->putJson('api/partners/2',[
+        $response = $this->putJson('api/drivers/2',[
             'ci'         => '123'
         ]);
         $response->assertStatus(422)

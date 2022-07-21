@@ -39,4 +39,11 @@ Route::post('roles', [\App\Http\Controllers\Role\RoleController::class,'_store']
 Route::put('roles/{id}', [\App\Http\Controllers\Role\RoleController::class,'_update']);
 Route::delete('roles/{id}', [\App\Http\Controllers\Role\RoleController::class,'_destroy']);
 
+/** routes para Partners **/
 Route::apiResource('partners',PartnerController::class);
+
+/** routes para Driver **/
+Route::apiResource('drivers', \App\Http\Controllers\Driver\DriverController::class);
+
+/** routes para Vehicle **/
+Route::apiResource('vehicles', \App\Http\Controllers\Vehicle\VehicleController::class);

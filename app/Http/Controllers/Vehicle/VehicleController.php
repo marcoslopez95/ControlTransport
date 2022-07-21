@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Http\Controllers\Partner;
+namespace App\Http\Controllers\Vehicle;
 
 use Illuminate\Http\Request;
 use App\Core\CrudController;
-use App\Http\Requests\PartnerRequest;
-use App\Services\Partner\PartnerService;
-/** @property PartnerService $service */
-class PartnerController extends CrudController
+use App\Http\Requests\VehicleRequest;
+use App\Services\Vehicle\VehicleService;
+/** @property VehicleService $service */
+class VehicleController extends CrudController
 {
-    public function __construct(PartnerService $service)
+    public function __construct(VehicleService $service)
     {
         parent::__construct($service);
     }
@@ -18,7 +18,7 @@ class PartnerController extends CrudController
         return parent::_index($request);
     }
 
-    public function store(PartnerRequest $request){
+    public function store(VehicleRequest $request){
         return parent::_store($request);
     }
 
@@ -26,12 +26,12 @@ class PartnerController extends CrudController
         return parent::_show($id);
     }
 
-    public function update($id, PartnerRequest $request){
-
+    public function update($id, VehicleRequest $request)
+    {
         return parent::_update($id,$request);
     }
 
     public function destroy($id, Request $request){
-        return parent::_destroy($id,$request);
+        return parent::_destroy($id, $request);
     }
 }
