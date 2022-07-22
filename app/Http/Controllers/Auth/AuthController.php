@@ -7,6 +7,8 @@ use App\Core\CrudController;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Services\Auth\AuthService;
+use Exception;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 /** @property AuthService $service */
@@ -55,8 +57,19 @@ class AuthController extends CrudController
             $data = $this->service->login($request);
             return custom_response(true,'Inicio de sesión',$data);
         }catch(\Exception $e){
-            DB::rollBack();
             $mensaje = 'Error al iniciar sesión';
+            $data = $e->getMessage();
+            return custom_error($e,$mensaje,$data,425);
+        }
+    }
+
+    public function logout(Request $request){
+        try{
+            $user = Auth::user();
+                $user->tokens()->delete();
+            return custom_response(true,'logout exitoso');
+        }catch(\Exception $e){
+            $mensaje = 'Error al cerrar sesión';
             $data = $e->getMessage();
             return custom_error($e,$mensaje,$data,425);
         }
