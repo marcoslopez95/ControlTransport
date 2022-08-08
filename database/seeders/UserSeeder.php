@@ -23,7 +23,7 @@ class UserSeeder extends Seeder
                 'first_name'    => 'Admin',
                 'last_name'     => 'Admin',
                 'email'         => 'admin@controltransport.com',
-                'password'      => Hash::make('admin123admin'),
+                'password'      => 'admin123admin',
                 'role_id'       => $role_id
             ]);
         }

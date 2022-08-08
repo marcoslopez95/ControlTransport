@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Partner;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -11,7 +12,20 @@ class SocioTest extends TestCase
 {
 
     use RefreshDatabase;
+    private function createToken(){
+        $user = User::create([
+            'first_name'    => 'Admin',
+            'last_name'     => 'Admin',
+            'email'         => 'admin@controltransport.com',
+            'password'      => 'admin123admin',
+            'role_id'       => 1
+        ]);
 
+        $token = $user->createToken('login')->plainTextToken;
+        $pos = strpos($token,'|');
+        $token = substr($token,$pos+1);
+        return $token;
+    }
     public function test_socio_can_be_created(){
         $this->withoutExceptionHandling();
 
@@ -19,6 +33,8 @@ class SocioTest extends TestCase
             'first_name' => 'Marcos',
             'last_name'  => 'López',
             'ci'         => '123123123'
+        ],[
+            'Authorization' => 'Bearer '.self::createToken()
         ]);
 
         $response->assertStatus(201)
@@ -39,7 +55,9 @@ class SocioTest extends TestCase
         $this->withoutExceptionHandling();
         Partner::factory(5)->create();
 
-        $response = $this->getJson('api/partners');
+        $response = $this->getJson('api/partners',[
+            'Authorization' => 'Bearer '.self::createToken()
+        ]);
         $response->assertOk()
             ->assertJsonFragment([
             'success' => true
@@ -55,11 +73,14 @@ class SocioTest extends TestCase
 
         Partner::factory(1)->create();
         $partner = Partner::first();
-        $response = $this->get('api/partners/'.$partner->id);
+        $response = $this->get('api/partners/'.$partner->id,[
+            'Authorization' => 'Bearer '.self::createToken()
+        ]);
         $response->assertOk()
             ->assertJsonFragment([
             'success' => true
-        ]);
+        ]
+        );
 
         $response->assertJsonPath('data',$partner->toArray());
     }
@@ -71,6 +92,8 @@ class SocioTest extends TestCase
             'first_name' => 'Marcos',
             'last_name'  => 'Lopez',
             'ci'         => '123'
+        ],[
+            'Authorization' => 'Bearer '.self::createToken()
         ]);
         $response->assertStatus(205)
                 ->assertJsonFragment([
@@ -88,7 +111,9 @@ class SocioTest extends TestCase
         $this->withoutExceptionHandling();
         $partner = Partner::factory(1)->create();
         $id = $partner[0]->id;
-        $response = $this->deleteJson('api/partners/'.$id);
+        $response = $this->deleteJson('api/partners/'.$id,[],[
+            'Authorization' => 'Bearer '.self::createToken()
+        ]);
         $response->assertStatus(202)
                 ->assertJsonFragment([
                     'success' => true
@@ -101,7 +126,9 @@ class SocioTest extends TestCase
 
     public function test_fields_required_to_save_partner(){
         //$this->withoutExceptionHandling();
-        $response = $this->postJson('api/partners',[]);
+        $response = $this->postJson('api/partners',[],[
+            'Authorization' => 'Bearer '.self::createToken()
+        ]);
 
         $response->assertStatus(422)
                 ->assertJsonFragment([
@@ -120,6 +147,8 @@ class SocioTest extends TestCase
             'first_name'    => 'Marcos',
             'last_name'     => 'Lopez',
             'ci'            => '123'
+        ],[
+            'Authorization' => 'Bearer '.self::createToken()
         ]);
 
         $response->assertStatus(422)
@@ -135,12 +164,19 @@ class SocioTest extends TestCase
             'last_name'  => 'Apellido',
             'ci'         => '123'
         ]);
-        $response = $this->putJson('api/partners/1',[]);
+        $response = $this->putJson('api/partners/1',[],[
+            'Authorization' => 'Bearer '.self::createToken()
+        ]);
 
         $response->assertStatus(422)
                 ->assertJsonFragment([
                     'success' => false
                 ]);
+    }
+
+    public function test_unauthorized(){
+        $respose = $this->getJson('api/partners');
+        $respose->assertStatus(401);
     }
 
     public function test_unique_ci_in_update_partner(){
@@ -157,6 +193,8 @@ class SocioTest extends TestCase
 
         $response = $this->putJson('api/partners/2',[
             'ci'         => '123'
+        ],[
+            'Authorization' => 'Bearer '.self::createToken()
         ]);
         $response->assertStatus(422)
             ->assertJsonFragment([

@@ -3,13 +3,30 @@
 namespace Tests\Feature;
 
 use App\Models\Driver;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
 
 class DriverTest extends TestCase
 {
     use RefreshDatabase;
+
+    private function createToken(){
+        $user = User::create([
+            'first_name'    => 'Admin',
+            'last_name'     => 'Admin',
+            'email'         => 'admin@controltransport.com',
+            'password'      => 'admin123admin',
+            'role_id'       => 1
+        ]);
+
+        $token = $user->createToken('login')->plainTextToken;
+        $pos = strpos($token,'|');
+        $token = substr($token,$pos+1);
+        return $token;
+    }
 
     public function test_driver_can_be_created(){
         $this->withoutExceptionHandling();
@@ -18,6 +35,8 @@ class DriverTest extends TestCase
             'first_name' => 'Marcos',
             'last_name'  => 'López',
             'ci'         => '123123123'
+        ],[
+            'Authorization' => 'Bearer '.self::createToken()
         ]);
 
         $response->assertStatus(201)
@@ -38,7 +57,9 @@ class DriverTest extends TestCase
         $this->withoutExceptionHandling();
         Driver::factory(5)->create();
 
-        $response = $this->getJson('api/drivers');
+        $response = $this->getJson('api/drivers',[
+            'Authorization' => 'Bearer '.self::createToken()
+        ]);
         $response->assertOk()
             ->assertJsonFragment([
             'success' => true
@@ -54,7 +75,9 @@ class DriverTest extends TestCase
 
         Driver::factory(1)->create();
         $partner = Driver::first();
-        $response = $this->get('api/drivers/'.$partner->id);
+        $response = $this->get('api/drivers/'.$partner->id,[
+            'Authorization' => 'Bearer '.self::createToken()
+        ]);
         $response->assertOk()
             ->assertJsonFragment([
             'success' => true
@@ -70,6 +93,8 @@ class DriverTest extends TestCase
             'first_name' => 'Marcos',
             'last_name'  => 'Lopez',
             'ci'         => '123'
+        ],[
+            'Authorization' => 'Bearer '.self::createToken()
         ]);
         $response->assertStatus(205)
                 ->assertJsonFragment([
@@ -87,7 +112,9 @@ class DriverTest extends TestCase
         $this->withoutExceptionHandling();
         $partner = Driver::factory(1)->create();
         $id = $partner[0]->id;
-        $response = $this->deleteJson('api/drivers/'.$id);
+        $response = $this->deleteJson('api/drivers/'.$id,[],[
+            'Authorization' => 'Bearer '.self::createToken()
+        ]);
         $response->assertStatus(202)
                 ->assertJsonFragment([
                     'success' => true
@@ -100,12 +127,18 @@ class DriverTest extends TestCase
 
     public function test_fields_required_to_save_driver(){
         //$this->withoutExceptionHandling();
-        $response = $this->postJson('api/drivers',[]);
+        $response = $this->postJson('api/drivers',[],[
+            'Authorization' => 'Bearer '.self::createToken()
+        ]);
 
         $response->assertStatus(422)
                 ->assertJsonFragment([
                     'success' => false
                 ]);
+    }
+    public function test_unauthorized(){
+        $response = $this->getJson('api/drivers');
+        $response->assertStatus(401);
     }
 
     public function test_unique_ci_in_drivers(){
@@ -119,6 +152,8 @@ class DriverTest extends TestCase
             'first_name'    => 'Marcos',
             'last_name'     => 'Lopez',
             'ci'            => '123'
+        ],[
+            'Authorization' => 'Bearer '.self::createToken()
         ]);
 
         $response->assertStatus(422)
@@ -134,7 +169,9 @@ class DriverTest extends TestCase
             'last_name'  => 'Apellido',
             'ci'         => '123'
         ]);
-        $response = $this->putJson('api/drivers/1',[]);
+        $response = $this->putJson('api/drivers/1',[],[
+            'Authorization' => 'Bearer '.self::createToken()
+        ]);
 
         $response->assertStatus(422)
                 ->assertJsonFragment([
@@ -156,6 +193,8 @@ class DriverTest extends TestCase
 
         $response = $this->putJson('api/drivers/2',[
             'ci'         => '123'
+        ],[
+            'Authorization' => 'Bearer '.self::createToken()
         ]);
         $response->assertStatus(422)
             ->assertJsonFragment([

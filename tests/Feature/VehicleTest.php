@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\User;
 use App\Models\Vehicle;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -11,6 +12,21 @@ class VehicleTest extends TestCase
 {
     use RefreshDatabase;
 
+    private function createToken(){
+        $user = User::create([
+            'first_name'    => 'Admin',
+            'last_name'     => 'Admin',
+            'email'         => 'admin@controltransport.com',
+            'password'      => 'admin123admin',
+            'role_id'       => 1
+        ]);
+
+        $token = $user->createToken('login')->plainTextToken;
+        $pos = strpos($token,'|');
+        $token = substr($token,$pos+1);
+        return $token;
+    }
+
     public function test_vehicle_can_be_created(){
         $this->withoutExceptionHandling();
 
@@ -19,6 +35,8 @@ class VehicleTest extends TestCase
             'num_control' => 'algo',
             'description' => 'algo',
             'status' => 'Operativo',
+        ],[
+            'Authorization' => 'Bearer '.self::createToken()
         ]);
 
         $response->assertStatus(201)
@@ -39,7 +57,9 @@ class VehicleTest extends TestCase
         $this->withoutExceptionHandling();
         Vehicle::factory(5)->create();
 
-        $response = $this->getJson('api/vehicles');
+        $response = $this->getJson('api/vehicles',[
+            'Authorization' => 'Bearer '.self::createToken()
+        ]);
         $response->assertOk()
             ->assertJsonFragment([
             'success' => true
@@ -55,7 +75,9 @@ class VehicleTest extends TestCase
 
         Vehicle::factory(1)->create();
         $partner = Vehicle::first();
-        $response = $this->get('api/vehicles/'.$partner->id);
+        $response = $this->get('api/vehicles/'.$partner->id,[
+            'Authorization' => 'Bearer '.self::createToken()
+        ]);
         $response->assertOk()
             ->assertJsonFragment([
             'success' => true
@@ -72,6 +94,8 @@ class VehicleTest extends TestCase
             'num_control' => 'algo Mas',
             'description' => 'algo Mas',
             'status' => 'Averiado',
+        ],[
+            'Authorization' => 'Bearer '.self::createToken()
         ]);
         $response->assertStatus(205)
                 ->assertJsonFragment([
@@ -90,7 +114,9 @@ class VehicleTest extends TestCase
         $this->withoutExceptionHandling();
         $partner = Vehicle::factory(1)->create();
         $id = $partner[0]->id;
-        $response = $this->deleteJson('api/vehicles/'.$id);
+        $response = $this->deleteJson('api/vehicles/'.$id,[],[
+            'Authorization' => 'Bearer '.self::createToken()
+        ]);
         $response->assertStatus(202)
                 ->assertJsonFragment([
                     'success' => true
@@ -103,7 +129,9 @@ class VehicleTest extends TestCase
 
     public function test_fields_required_to_save_vehicle(){
         //$this->withoutExceptionHandling();
-        $response = $this->postJson('api/vehicles',[]);
+        $response = $this->postJson('api/vehicles',[],[
+            'Authorization' => 'Bearer '.self::createToken()
+        ]);
 
         $response->assertStatus(422)
                 ->assertJsonFragment([
@@ -124,6 +152,8 @@ class VehicleTest extends TestCase
             'num_control' => 'algo Mas',
             'description' => 'algo Mas',
             'status' => 'Operativo',
+        ],[
+            'Authorization' => 'Bearer '.self::createToken()
         ]);
 
         $response->assertStatus(422)
@@ -140,7 +170,9 @@ class VehicleTest extends TestCase
             'description' => 'algo Mas',
             'status' => 'Operativo',
         ]);
-        $response = $this->putJson('api/vehicles/1',[]);
+        $response = $this->putJson('api/vehicles/1',[],[
+            'Authorization' => 'Bearer '.self::createToken()
+        ]);
 
         $response->assertStatus(422)
                 ->assertJsonFragment([
@@ -164,10 +196,17 @@ class VehicleTest extends TestCase
 
         $response = $this->putJson('api/vehicles/2',[
             'num_control'         => '123'
+        ],[
+            'Authorization' => 'Bearer '.self::createToken()
         ]);
         $response->assertStatus(422)
             ->assertJsonFragment([
                 'success' => false
             ]);
+    }
+
+    public function test_unauthorized(){
+        $response = $this->getJson('api/vehicles');
+        $response->assertStatus(401);
     }
 }
