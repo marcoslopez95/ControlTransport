@@ -47,17 +47,16 @@ Route::middleware('auth:sanctum')->group(function () {
 
     /** routes para Liquidation **/
     Route::apiResource('liquidations', \App\Http\Controllers\Liquidation\LiquidationController::class);
+
+    Route::apiResource('users', UserController::class)->only(['index','show','update','delete']);
 });
 
 /** routes para Auth **/
 Route::prefix('auth')->group(function () {
     Route::middleware('auth:sanctum')
         ->get('logout', [\App\Http\Controllers\Auth\AuthController::class, 'logout']);
+    Route::middleware('auth:sanctum')
+        ->post('register', [\App\Http\Controllers\Auth\AuthController::class, 'register']);
 
     Route::post('login', [\App\Http\Controllers\Auth\AuthController::class, 'login']);
-    Route::post('register', [\App\Http\Controllers\Auth\AuthController::class, 'register']);
-});
-
-Route::prefix('users')->group(function () {
-    Route::apiResource('', UserController::class)->only(['index', 'update', 'show']);
 });

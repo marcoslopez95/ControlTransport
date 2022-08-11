@@ -24,7 +24,7 @@ class UserSeeder extends Seeder
                 'last_name'     => 'Admin',
                 'email'         => 'admin@controltransport.com',
                 'password'      => 'admin123admin',
-                'role_id'       => $role_id
+                'role_id'       => 1
             ]);
         }
         if(!User::firstWhere('email','user@controltransport.com')){
@@ -33,7 +33,7 @@ class UserSeeder extends Seeder
                 'last_name'     => 'User',
                 'email'         => 'user@controltransport.com',
                 'password'      => 'user123user',
-                'role_id'       => $role_id
+                'role_id'       => 2
             ]);
         }
     }
