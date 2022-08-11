@@ -41,9 +41,12 @@ Route::middleware('auth:sanctum')->group(function () {
 
     /** routes para Coin **/
     Route::apiResource('coins', \App\Http\Controllers\Coin\CoinController::class);
-    /** routes para Additional **/
 
+    /** routes para Additional **/
     Route::apiResource('additionals', \App\Http\Controllers\Additional\AdditionalController::class);
+
+    /** routes para Liquidation **/
+    Route::apiResource('liquidations', \App\Http\Controllers\Liquidation\LiquidationController::class);
 });
 
 /** routes para Auth **/
@@ -58,4 +61,3 @@ Route::prefix('auth')->group(function () {
 Route::prefix('users')->group(function () {
     Route::apiResource('', UserController::class)->only(['index', 'update', 'show']);
 });
-
