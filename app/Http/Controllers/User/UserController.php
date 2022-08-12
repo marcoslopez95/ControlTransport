@@ -17,7 +17,7 @@ class UserController extends CrudController
 
     public function index(Request $request){
         // if(Auth::user()->rol_id != 1){
-            return custom_response(false,'Desautorizado',[],401);
+            // return custom_response(false,'Desautorizado',[],401);
         // }
         return parent::_index($request);
     }
