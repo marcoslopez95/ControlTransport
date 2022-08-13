@@ -48,7 +48,7 @@ Route::middleware('auth:sanctum')->group(function () {
     /** routes para Liquidation **/
     Route::apiResource('liquidations', \App\Http\Controllers\Liquidation\LiquidationController::class);
 
-    Route::apiResource('users', UserController::class)->only(['index','show','update','delete']);
+    Route::apiResource('users', UserController::class)->except(['store']);
 });
 
 /** routes para Auth **/
