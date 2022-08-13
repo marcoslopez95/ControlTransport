@@ -30,7 +30,7 @@ class CoinTest extends TestCase
 
     public function test_created_successfull_coin()
     {
-        $this->withoutExceptionHandling();
+       // $this->withoutExceptionHandling();
 
         $response = $this->postJson('/api/coins', [
             'name'   => 'Bolivar Digital',
@@ -45,7 +45,7 @@ class CoinTest extends TestCase
                 'success' => true,
                 'message' => 'Creado con éxito',
                 'data'    => [
-                    'id' => 1,
+                    'id' => 5,
                     'name'   => 'Bolivar Digital',
                     'symbol' => 'BsD'
                 ],
@@ -77,7 +77,7 @@ class CoinTest extends TestCase
                 'message' => 'index',
                 'data'    => [
                     [
-                        'id' => 2,
+                        'id' => 6,
                         'name'   => 'Bolivar',
                         'symbol' => 'Bs'
                     ]
@@ -93,12 +93,12 @@ class CoinTest extends TestCase
 
     public function test_show_a_coin(){
         $this->withoutExceptionHandling();
-        Coin::create([
+        $coin = Coin::create([
             'name' => 'Bolivar',
             'symbol' => 'Bs'
         ]);
 
-        $response = $this->getJson('/api/coins/3', [
+        $response = $this->getJson('/api/coins/'.$coin->id, [
             'Authorization' => 'Bearer ' . self::createToken()
         ]);
 
@@ -108,7 +108,7 @@ class CoinTest extends TestCase
                 'success' => true,
                 'message' => 'Show con éxito',
                 'data'    => [
-                        'id' => 3,
+                        'id' => $coin->id,
                         'name'   => 'Bolivar',
                         'symbol' => 'Bs'
                 ],
@@ -123,12 +123,12 @@ class CoinTest extends TestCase
 
     public function test_edit_a_coin(){
         $this->withoutExceptionHandling();
-        Coin::create([
+        $coin = Coin::create([
             'name' => 'Bolivar',
             'symbol' => 'Bs'
         ]);
 
-        $response = $this->putJson('/api/coins/4',[
+        $response = $this->putJson('/api/coins/'.$coin->id,[
             'name' => 'Peso Colombiano',
             'symbol' => 'cop'
         ], [
@@ -141,7 +141,7 @@ class CoinTest extends TestCase
                 'success' => true,
                 'message' => 'Editado con éxito',
                 'data'    => [
-                        'id' => 4,
+                        'id' => $coin->id,
                         'name'   => 'Peso Colombiano',
                         'symbol' => 'cop'
                 ],
@@ -156,12 +156,12 @@ class CoinTest extends TestCase
 
     public function test_delete_a_coin(){
         $this->withoutExceptionHandling();
-        Coin::create([
+        $coin = Coin::create([
             'name' => 'Bolivar',
             'symbol' => 'Bs'
         ]);
 
-        $response = $this->deleteJson('/api/coins/5',[], [
+        $response = $this->deleteJson('/api/coins/'.$coin->id,[], [
             'Authorization' => 'Bearer ' . self::createToken()
         ]);
 

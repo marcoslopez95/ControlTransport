@@ -18,4 +18,16 @@ class CoinRepository extends CrudRepository
         parent::__construct($model);
     }
 
+    public function defaultCoin(){
+        $coin = $this->model::whereFirst('symbol','BsD');
+        return $coin;
+    }
+
+    public function _index($request = null, $user = null): Coin
+    {
+        $coins = $this->model::Filter($request)->get();
+        
+        return $coins;
+    }
+
 }
