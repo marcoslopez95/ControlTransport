@@ -18,9 +18,9 @@ class AdditionalRepository extends CrudRepository
         parent::__construct($model);
     }
 
-    public function _index($request = null, $user = null): Additional
+    public function _index($request = null, $user = null)
     {
-        $additionals = $this->model::Filter($request)->get();
+        $additionals = $this->model::Filter($request)->orderBy('id','desc')->get();
 
         return $additionals;
     }

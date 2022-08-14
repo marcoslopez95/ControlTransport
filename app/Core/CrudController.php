@@ -66,7 +66,7 @@ class CrudController extends BaseController
         try{
             $data = $this->service->_store($request);
             DB::commit();
-            Log::info('[created] '.$data);
+            Log::info('[created] '.json_encode($data));
             return custom_response(true, 'Creado con éxito',$data,201);
         }catch(Exception $e){
             DB::rollback();
@@ -86,7 +86,7 @@ class CrudController extends BaseController
         try{
             $data = $this->service->_update($id, $request);
             DB::commit();
-            Log::info('[updated] '. $data);
+            Log::info('[updated] '.json_encode($data));
             return custom_response(true, 'Editado con éxito',$data,205);
         }catch(Exception $e){
             DB::rollback();

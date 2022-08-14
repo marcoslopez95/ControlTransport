@@ -18,4 +18,10 @@ class VehicleRepository extends CrudRepository
         parent::__construct($model);
     }
 
+    public function _index($request = null, $user = null)
+    {
+        $vehicles = $this->model::filter($request)->orderBy('id','desc')->get();
+        return $vehicles;
+    }
+
 }

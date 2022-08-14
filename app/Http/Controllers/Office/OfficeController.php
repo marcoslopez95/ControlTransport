@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Http\Controllers\Liquidation;
+namespace App\Http\Controllers\Office;
 
 use Illuminate\Http\Request;
 use App\Core\CrudController;
-use App\Services\Liquidation\LiquidationService;
-/** @property LiquidationService $service */
-class LiquidationController extends CrudController
+use App\Services\Office\OfficeService;
+/** @property OfficeService $service */
+class OfficeController extends CrudController
 {
-    public function __construct(LiquidationService $service)
+    public function __construct(OfficeService $service)
     {
         parent::__construct($service);
     }
@@ -26,10 +26,10 @@ class LiquidationController extends CrudController
     }
 
     public function update($id, Request $request){
-        return parent::_update($id, $request);
+        return parent::_update($id,$request);
     }
 
     public function destroy($id, Request $request){
-        return parent::_destroy($id, $request);
+        return parent::_destroy($id,$request);
     }
 }

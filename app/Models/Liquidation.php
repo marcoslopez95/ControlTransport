@@ -7,16 +7,54 @@ use App\Core\CrudModel;
 
 class Liquidation extends CrudModel
 {
-    protected $guarded = ['id','total','falta'];
+    protected $guarded = ['id', 'total', 'falta'];
     protected $fillable = [
         'vehicle_id',
         'precio_pasaje',
         'coin_id',
         'date',
+        'total',
+        'falta',
         'pasajeros',
         'office_origin',
         'office_destiny'
     ];
+
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'id'             => 'integer',
+        'coin_id'        => 'integer',
+        'vehicle_id'     => 'integer',
+        'office_origin'  => 'integer',
+        'office_destiny' => 'integer',
+        'precio_pasaje'  => 'float',
+        'total'          => 'float',
+        'falta'          => 'float',
+    ];
+
+    /**
+     * Get all of the ammounts for the Liquidation
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function ammounts()
+    {
+        return $this->hasMany(Amount::class);
+    }
+    /**
+     * The additionals that belong to the Liquidation
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function additionals()
+    {
+
+        return $this->belongsToMany(Additional::class);
+    }
 
     /**
      * Get the officeOrigin that owns the Liquidation
@@ -43,7 +81,7 @@ class Liquidation extends CrudModel
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function vehicles()
+    public function vehicle()
     {
         return $this->belongsTo(Vehicle::class);
     }

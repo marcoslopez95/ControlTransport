@@ -18,4 +18,9 @@ class DriverRepository extends CrudRepository
         parent::__construct($model);
     }
 
+    public function _index($request = null, $user = null)
+    {
+        $drivers = $this->model::filter($request)->orderBy('id','desc')->get();
+        return $drivers;
+    }
 }

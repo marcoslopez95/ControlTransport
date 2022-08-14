@@ -49,6 +49,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('liquidations', \App\Http\Controllers\Liquidation\LiquidationController::class);
 
     Route::apiResource('users', UserController::class)->except(['store']);
+
+    /** routes para Office **/
+    Route::apiResource('offices', \App\Http\Controllers\Office\OfficeController::class);
 });
 
 /** routes para Auth **/
@@ -60,3 +63,4 @@ Route::prefix('auth')->group(function () {
 
     Route::post('login', [\App\Http\Controllers\Auth\AuthController::class, 'login']);
 });
+
