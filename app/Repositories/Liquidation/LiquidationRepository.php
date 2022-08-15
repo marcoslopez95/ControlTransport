@@ -26,6 +26,7 @@ class LiquidationRepository extends CrudRepository
 
     public function saveAmount($id,$amount){
         self::_show($id);
+
         return $this->object->ammounts()->createMany($amount['ammounts']);
     }
 

@@ -52,7 +52,7 @@ class AdditionalTest extends TestCase
                 'data'    => [
                     'id' => 1,
                     'description'   => 'Pago',
-                    'percent'       => '12.5',
+                    'percent'       => 12.5,
                     'coin_id'       => $coin->id,
                     'type'          => 'Retencion',
                 ],
@@ -68,17 +68,17 @@ class AdditionalTest extends TestCase
     }
 
     public function test_lista_de_adicionales(){
-        $coin = Coin::create([
-            'name' => 'Bolivar',
-            'symbol' => 'bs'
-        ]);
-        Additional::create([
-            'description'   => 'Pago',
-            'percent'       => '12.5',
-            'coin_id'       => $coin->id,
-            'type'          => 'Retencion',
-        ]);
-
+        // $coin = Coin::create([
+        //     'name' => 'Bolivar',
+        //     'symbol' => 'bs'
+        // ]);
+        // $add = Additional::create([
+        //     'description'   => 'Pago',
+        //     'percent'       => 12.5,
+        //     'coin_id'       => $coin->id,
+        //     'type'          => 'Retencion',
+        // ]);
+        $add = Additional::factory(1)->for(Coin::factory())->create();
         $response = $this->getJson('/api/additionals', [
             'Authorization' => 'Bearer ' . self::createToken()
         ]);
@@ -89,12 +89,13 @@ class AdditionalTest extends TestCase
                     'message' => 'index',
                     'data'    => [
                         [
-                            'id' => 2,
-                            'description'   => 'Pago',
-                            'percent'       => '12.5',
-                            'coin_id'       => $coin->id,
-                            'quantity'      => null,
-                            'type'          => 'Retencion',
+                            'id'            => $add[0]->id,
+                            'description'   => $add[0]->description,
+                            'percent'       => $add[0]->percent,
+                            'coin_id'       => $add[0]->coin_id,
+                            'quantity'      => $add[0]->quantity,
+                            'type'          => $add[0]->type,
+                            'coin'          => $add[0]->coin
                         ]
                     ],
                     'count'   => 1
@@ -102,12 +103,7 @@ class AdditionalTest extends TestCase
     }
 
     public function test_mostrar_adicional(){
-        Additional::create([
-            'description'   => 'Pago',
-            'percent'       => '12.5',
-            'coin_id'       => 1,
-            'type'          => 'Retencion',
-        ]);
+        $add = Additional::factory(1)->for(Coin::factory())->create();
 
         $response = $this->getJson('api/additionals/3', [
             'Authorization' => 'Bearer ' . self::createToken()
@@ -119,12 +115,13 @@ class AdditionalTest extends TestCase
             'success' => true,
             'message' => 'Show con éxito',
             'data'    => [
-                    'id' => 3,
-                    'description'   => 'Pago',
-                    'percent'       => '12.5',
-                    'coin_id'       => 1,
-                    'quantity'      => null,
-                    'type'          => 'Retencion',
+                    'id'            => $add[0]->id,
+                    'description'   => $add[0]->description,
+                    'percent'       => $add[0]->percent,
+                    'coin_id'       => $add[0]->coin_id,
+                    'quantity'      => $add[0]->quantity,
+                    'type'          => $add[0]->type,
+                    'coin'          => $add[0]->coin
             ],
             'count'   => 1
         ]);
@@ -163,7 +160,7 @@ class AdditionalTest extends TestCase
                 'data'    => [
                         'id' => 4,
                         'description'   => 'Editado',
-                        'percent'       => '1',
+                        'percent'       => 1,
                         'quantity'      => null,
                         'coin_id'       => $coin2->id,
                         'type'          => 'Descuento',

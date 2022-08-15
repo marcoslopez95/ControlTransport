@@ -16,6 +16,8 @@ class Partner extends Model
         'ci'
     ];
 
+    protected $hidden = ['created_at','updated_at'];
+
     public function scopeFilter(Builder $builder, $request){
         return $builder
             ->when($request->value,function(Builder $q,$value){

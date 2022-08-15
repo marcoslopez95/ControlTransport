@@ -14,7 +14,7 @@ class Amount extends Model
     protected $fillable =[
             'coin_id',
             'quantity',
-            'liquidation_id',
+            // 'liquidation_id',
             'neto',
             'received',
     ];
@@ -26,7 +26,7 @@ class Amount extends Model
      */
     protected $casts = [
         'coin_id'        => 'integer',
-        'liquidation_id' => 'integer',
+        // 'liquidation_id' => 'integer',
         'quantity'       => 'float',
         'neto'           => 'float',
         'received'       => 'float',
@@ -46,9 +46,12 @@ class Amount extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function liquidation()
-    {
-        return $this->belongsTo(Liquidation::class);
-    }
+    // public function liquidation()
+    // {
+    //     return $this->belongsTo(Liquidation::class);
+    // }
 
+    public function amountable(){
+        return $this->morphTo();
+    }
 }

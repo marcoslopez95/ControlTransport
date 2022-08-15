@@ -63,7 +63,7 @@ class SocioTest extends TestCase
             'success' => true
         ]);
 
-        $partners = Partner::all();
+        $partners = Partner::orderBy('id','desc')->get();
 
         $response->assertJsonPath('data',$partners->toArray());
     }

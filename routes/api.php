@@ -64,3 +64,7 @@ Route::prefix('auth')->group(function () {
     Route::post('login', [\App\Http\Controllers\Auth\AuthController::class, 'login']);
 });
 
+ 
+/** routes para Travel **/ 
+ 
+Route::apiResource('travel', \App\Http\Controllers\Travel\TravelController::class);

@@ -168,15 +168,13 @@ class LiquidationTest extends TestCase
         ##############################
 
         # Verificando Relaciones
-        $rel_additional = DB::table('additional_liquidation')
-            ->whereIn('additional_id', [$additional->id, $additional2->id])
-            ->get();
-        $this->assertCount(2, $rel_additional);
+        // $rel_additional = DB::table('additional_liquidation')
+        //     ->whereIn('additional_id', [$additional->id, $additional2->id])
+        //     ->get();
+        $this->assertCount(2, $liquidation->additionals);
 
-        $rel_ammount = DB::table('amounts')
-            ->where('liquidation_id', $liquidation->id)
-            ->get();
-        $this->assertCount(2, $rel_ammount);
+        // $rel_ammount = $liquidation->ammounts;
+        $this->assertCount(2, $liquidation->ammounts);
     }
 
     public function test_mostrar_liquidacion_exitoso()
@@ -238,6 +236,7 @@ class LiquidationTest extends TestCase
         $response = $this->getJson('api/liquidations/' . $liquidation->id, [
             'Authorization' => 'Bearer ' . self::createToken()
         ]);
+        $liquidation = Liquidation::first();
 
         $response
             ->assertOk()
@@ -255,40 +254,56 @@ class LiquidationTest extends TestCase
                     'falta'         => 0,
                     'office_origin' => $offices[0]->id,
                     'office_destiny' => $offices[1]->id,
+                    'name_office_origin' => $offices[0]->name,
+                    'name_office_destiny' => $offices[1]->name,
                     'additionals'   => [
                         [
-                            'id' => $additional->id,
-                            'description'   =>  'Descuentro',
-                            'percent'       =>  12,
-                            'quantity'      =>  null,
-                            'coin_id'       =>  $coin[0]->id,
-                            'type'          =>  'Descuento',
-                        ], [
-                            'id' => $additional2->id,
-                            'description'   =>  'Descuentro',
-                            'percent'       =>  null,
-                            'quantity'      =>  5,
-                            'coin_id'       =>  $coin[0]->id,
-                            'type'          =>  'Descuento',
-                        ]
+                            'id'            =>  $liquidation->additionals[0]->id,
+                            'description'   =>  $liquidation->additionals[0]->description,
+                            'percent'       =>  $liquidation->additionals[0]->percent,
+                            'quantity'      =>  $liquidation->additionals[0]->quantity,
+                            'coin_id'       =>  $liquidation->additionals[0]->coin_id,
+                            'type'          =>  $liquidation->additionals[0]->type,
+                        ],
+                        [
+                            'id'            => $liquidation->additionals[1]->id,
+                            'description'   => $liquidation->additionals[1]->description,
+                            'percent'       => $liquidation->additionals[1]->percent,
+                            'quantity'      => $liquidation->additionals[1]->quantity,
+                            'coin_id'       => $liquidation->additionals[1]->coin_id,
+                            'type'          => $liquidation->additionals[1]->type,
+                        ],
                     ],
                     'ammounts'      => [
                         [
-                            'id' => 3,
-                            'liquidation_id'=> 2,
-                            'coin_id'       => $coin[0]->id,
-                            'quantity'      => 50.4,
-                            'neto'          => 50,
-                            'received'      => 50,
+                            'id'              => $liquidation->ammounts[0]->id,
+                            'amountable_id'   => $liquidation->ammounts[0]->amountable_id,
+                            'amountable_type' => $liquidation->ammounts[0]->amountable_type,
+                            'coin_id'         => $liquidation->ammounts[0]->coin_id,
+                            'quantity'        => $liquidation->ammounts[0]->quantity,
+                            'neto'            => $liquidation->ammounts[0]->neto,
+                            'received'        => $liquidation->ammounts[0]->received,
                         ],
                         [
-                            'id' => 4,
-                            'liquidation_id'=> 2,
-                            'coin_id'       => $coin[1]->id,
-                            'quantity'      => 5,
-                            'neto'          => 5,
-                            'received'      => 5,
+                            'id'              => $liquidation->ammounts[1]->id,
+                            'amountable_id'   => $liquidation->ammounts[1]->amountable_id,
+                            'amountable_type' => $liquidation->ammounts[1]->amountable_type,
+                            'coin_id'         => $liquidation->ammounts[1]->coin_id,
+                            'quantity'        => $liquidation->ammounts[1]->quantity,
+                            'neto'            => $liquidation->ammounts[1]->neto,
+                            'received'        => $liquidation->ammounts[1]->received,
                         ],
+
+
+                    ],
+                    'coin' => $liquidation->coin,
+                    'vehicle' => [
+                        'id'          => $liquidation->vehicle->id,
+                        'plate'       => $liquidation->vehicle->plate,
+                        'num_control' => $liquidation->vehicle->num_control,
+                        'description' => $liquidation->vehicle->description,
+                        'status'      => $liquidation->vehicle->status,
+                        'partner_id'  => $liquidation->vehicle->partner_id,
                     ]
                 ],
                 'count'   => 1
@@ -378,6 +393,8 @@ class LiquidationTest extends TestCase
             'Authorization' => 'Bearer ' . self::createToken()
         ]);
 
+        $liquidation = Liquidation::first();
+        $liquidation->load(['ammounts','additionals']);
         $response
             ->assertStatus(205)
             ->assertExactJson([
@@ -394,6 +411,8 @@ class LiquidationTest extends TestCase
                     'falta'         => 0,
                     'office_origin' => $offices[1]->id,
                     'office_destiny' => $offices[0]->id,
+                    'name_office_origin' => $offices[1]->name,
+                    'name_office_destiny' => $offices[0]->name,
                     'additionals'   => [
                         [
                             'id' => $additional->id,
@@ -406,19 +425,30 @@ class LiquidationTest extends TestCase
                     ],
                     'ammounts'      => [
                         [
-                            'id' => 7,
-                            'liquidation_id'=> 3,
-                            'coin_id'       => $coin[1]->id,
-                            'quantity'      => 5,
-                            'neto'          => 5,
-                            'received'      => 5,
+                            'id'              => $liquidation->ammounts[0]->id,
+                            'amountable_id'   => $liquidation->ammounts[0]->amountable_id,
+                            'amountable_type' => $liquidation->ammounts[0]->amountable_type,
+                            'coin_id'         => $liquidation->ammounts[0]->coin_id,
+                            'quantity'        => $liquidation->ammounts[0]->quantity,
+                            'neto'            => $liquidation->ammounts[0]->neto,
+                            'received'        => $liquidation->ammounts[0]->received,
                         ],
+                    ],
+                    'coin' => $liquidation->coin,
+                    'vehicle' => [
+                        'id'          => $liquidation->vehicle->id,
+                        'plate'       => $liquidation->vehicle->plate,
+                        'num_control' => $liquidation->vehicle->num_control,
+                        'description' => $liquidation->vehicle->description,
+                        'status'      => $liquidation->vehicle->status,
+                        'partner_id'  => $liquidation->vehicle->partner_id,
                     ]
+
                 ],
                 'count'   => 1
             ]);
 
-            $liquidation = Liquidation::first();
+
 
         ####### Verificando datos en la tabla liquidacion ########
         $this->assertEquals(31.68, $liquidation->total);
@@ -433,15 +463,8 @@ class LiquidationTest extends TestCase
         ##############################
 
         # Verificando Relaciones
-        $rel_additional = DB::table('additional_liquidation')
-            ->whereIn('additional_id', [$additional->id, $additional2->id])
-            ->get();
-        $this->assertCount(1, $rel_additional);
-
-        $rel_ammount = DB::table('amounts')
-            ->where('liquidation_id', $liquidation->id)
-            ->get();
-        $this->assertCount(1, $rel_ammount);
+        $this->assertCount(1, $liquidation->additionals);
+        $this->assertCount(1, $liquidation->ammounts);
     }
 
     public function test_eliminar_liquidacion_exitoso(){

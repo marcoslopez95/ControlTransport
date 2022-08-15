@@ -38,16 +38,16 @@ class CoinTest extends TestCase
         ], [
             'Authorization' => 'Bearer ' . self::createToken()
         ]);
-
+        $coin = Coin::first();
         $response
             ->assertCreated()
             ->assertExactJson([
                 'success' => true,
                 'message' => 'Creado con éxito',
                 'data'    => [
-                    'id' => 5,
-                    'name'   => 'Bolivar Digital',
-                    'symbol' => 'BsD'
+                    'id'     => $coin->id,
+                    'name'   => $coin->name,
+                    'symbol' => $coin->symbol,
                 ],
                 'count'   => 1
             ]);
@@ -61,10 +61,7 @@ class CoinTest extends TestCase
     public function test_show_all_coins()
     {
         $this->withoutExceptionHandling();
-        Coin::create([
-            'name' => 'Bolivar',
-            'symbol' => 'Bs'
-        ]);
+        $coin = Coin::factory()->create();
 
         $response = $this->getJson('/api/coins', [
             'Authorization' => 'Bearer ' . self::createToken()
@@ -77,18 +74,18 @@ class CoinTest extends TestCase
                 'message' => 'index',
                 'data'    => [
                     [
-                        'id' => 6,
-                        'name'   => 'Bolivar',
-                        'symbol' => 'Bs'
+                        'id'     => $coin->id,
+                        'name'   => $coin->name,
+                        'symbol' => $coin->symbol
                     ]
                 ],
                 'count'   => 1
             ]);
 
-        $coin = Coin::all();
-        $this->assertCount(1, $coin->toArray());
-        $this->assertEquals($coin[0]->name, 'Bolivar');
-        $this->assertEquals($coin[0]->symbol, 'Bs');
+        $coins = Coin::all();
+        $this->assertCount(1, $coins->toArray());
+        $this->assertEquals($coins[0]->name, $coin->name);
+        $this->assertEquals($coins[0]->symbol, $coin->symbol);
     }
 
     public function test_show_a_coin(){

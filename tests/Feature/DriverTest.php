@@ -65,7 +65,7 @@ class DriverTest extends TestCase
             'success' => true
         ]);
 
-        $drivers = Driver::all();
+        $drivers = Driver::orderBy('id','desc')->get();
 
         $response->assertJsonPath('data',$drivers->toArray());
     }

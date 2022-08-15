@@ -7,7 +7,7 @@ use App\Core\CrudModel;
 
 class Liquidation extends CrudModel
 {
-    protected $guarded = ['id', 'total', 'falta'];
+    protected $guarded = ['id'];
     protected $fillable = [
         'vehicle_id',
         'precio_pasaje',
@@ -41,10 +41,11 @@ class Liquidation extends CrudModel
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function ammounts()
-    {
-        return $this->hasMany(Amount::class);
-    }
+    // public function ammounts()
+    // {
+    //     return $this->hasMany(Amount::class);
+    // }
+
     /**
      * The additionals that belong to the Liquidation
      *
@@ -94,5 +95,9 @@ class Liquidation extends CrudModel
     public function coin()
     {
         return $this->belongsTo(Coin::class);
+    }
+
+    public function ammounts(){
+        return $this->morphMany(Amount::class,'amountable');
     }
 }

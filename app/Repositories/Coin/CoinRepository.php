@@ -23,10 +23,10 @@ class CoinRepository extends CrudRepository
         return $coin;
     }
 
-    public function _index($request = null, $user = null): Coin
+    public function _index($request = null, $user = null)
     {
         $coins = $this->model::Filter($request)->get();
-        
+
         return $coins;
     }
 
