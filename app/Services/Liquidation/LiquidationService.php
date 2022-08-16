@@ -12,9 +12,11 @@ use App\Events\NewLiquidationRegisteredEvent;
 use App\Models\Additional;
 use App\Models\Coin;
 use App\Models\Office;
+use App\Models\Travel;
 use App\Repositories\Additional\AdditionalRepository;
 use App\Repositories\Coin\CoinRepository;
 use App\Repositories\Liquidation\LiquidationRepository;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -36,7 +38,14 @@ class LiquidationService extends CrudService
 
     public function _store(Request $request)
     {
-
+        if($request->type_travel == 'Llegada'){
+            $travel = Travel::where('vehicle_id',$request->vehicle_id)
+                ->where('status','En Viaje')
+                ->first();
+            if(!$travel){
+                throw new Exception('El vehiculo no tiene viajes iniciados');
+            }
+        }
         $total_liquidation = $request->pasajeros * $request->precio_pasaje;
         $default_coin      = $this->coin_repo->defaultCoin();
 
