@@ -12,4 +12,21 @@ class TravelController extends CrudController
     {
         parent::__construct($service);
     }
+
+    public function index(Request $request){
+        return parent::_index($request);
+    }
+
+    public function show($id, Request $request){
+        return parent::_show($id);
+    }
+
+    public function update($id, Request $request){
+        return parent::_update($id, $request);
+    }
+
+    public function destroy($id, Request $request)
+    {
+        return parent::_destroy($id, $request);
+    }
 }

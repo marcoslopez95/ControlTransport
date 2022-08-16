@@ -13,13 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('travels', function (Blueprint $table) {
+        Schema::create('travel', function (Blueprint $table) {
             $table->id();
-            $table->date('date_start');
-            $table->date('date_end');
             $table->foreignId('vehicle_id');
-            $table->string('observation');
-            $table->enum('status',['En Viaje, Finalizado']);
+            $table->date('date_start');
+            $table->date('date_end')->nullable();
+            $table->string('observation')->nullable();
+            $table->enum('status',['En Viaje', 'Finalizado'])->default('En Viaje');
             $table->timestamps();
         });
     }

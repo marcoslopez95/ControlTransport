@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Core\CrudModel;
+use Illuminate\Database\Eloquent\Builder;
 
 class Liquidation extends CrudModel
 {
@@ -35,6 +36,23 @@ class Liquidation extends CrudModel
         'total'          => 'float',
         'falta'          => 'float',
     ];
+
+    public function scopeFilter(Builder $builder, $request){
+        return $builder
+            ->when($request->vehicle_id,function(Builder $q,$vehicle_id){
+                return $q->where('vehicle_id',$vehicle_id);
+            })
+            ->when($request->office_origin,function(Builder $q,$office_origin){
+                return $q->where('office_origin',$office_origin);
+            })
+            ->when($request->office_destiny,function(Builder $q,$office_destiny){
+                return $q->where('office_destiny',$office_destiny);
+            })
+            ->when($request->travel_id,function(Builder $q,$travel_id){
+                return $q->where('travel_id',$travel_id);
+            })
+            ;
+    }
 
     /**
      * Get all of the ammounts for the Liquidation

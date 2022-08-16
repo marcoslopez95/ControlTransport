@@ -8,6 +8,7 @@ namespace App\Services\Liquidation;
 
 
 use App\Core\CrudService;
+use App\Events\NewLiquidationRegisteredEvent;
 use App\Models\Additional;
 use App\Models\Coin;
 use App\Models\Office;
@@ -48,7 +49,7 @@ class LiquidationService extends CrudService
         $request['id'] = $liquidation->id;
         $this->repository->saveAdditionals($liquidation->id,$request->only('additionals'));
         $this->repository->saveAmount($liquidation->id,$request->only('ammounts'));
-
+        event(new NewLiquidationRegisteredEvent($liquidation,$request->type_travel));
         return $request->all();
 
     }

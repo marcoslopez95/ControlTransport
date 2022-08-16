@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Partner\PartnerController;
+use App\Http\Controllers\Travel\TravelController;
 use App\Http\Controllers\User\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -52,6 +53,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     /** routes para Office **/
     Route::apiResource('offices', \App\Http\Controllers\Office\OfficeController::class);
+
+
+    /** routes para Travel **/
+    Route::apiResource('travel', \App\Http\Controllers\Travel\TravelController::class)->except(['store']);
 });
 
 /** routes para Auth **/
@@ -63,8 +68,3 @@ Route::prefix('auth')->group(function () {
 
     Route::post('login', [\App\Http\Controllers\Auth\AuthController::class, 'login']);
 });
-
- 
-/** routes para Travel **/ 
- 
-Route::apiResource('travel', \App\Http\Controllers\Travel\TravelController::class);
