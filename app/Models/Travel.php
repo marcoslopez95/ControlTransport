@@ -16,8 +16,18 @@ class Travel extends CrudModel
         'observation',
     ];
 
-    public function amountable(){
-        return $this->morphMany(Amount::class,'amountable');
+    // public function amountable(){
+    //     return $this->morphMany(Amount::class,'amountable');
+    // }
+
+    /**
+     * Get all of the montos for the Travel
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
+     */
+    public function montos()
+    {
+        return $this->hasManyThrough(Amount::class, Liquidation::class,'travel_id','amountable_id');
     }
 
     public function vehicle(){
@@ -39,5 +49,15 @@ class Travel extends CrudModel
             ->when($request->vehicle_id,function(Builder $q,$vehicleId){
                 return $q->where('vehicle_id',$vehicleId);
             });
+    }
+
+    /**
+     * Get all of the gastos for the Travel
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function gastos()
+    {
+        return $this->belongsToMany(Gasto::class,'gasto_triver_reception','triver_reception_id');
     }
 }

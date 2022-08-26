@@ -24,8 +24,9 @@ class UpdateTravelRequest extends FormRequest
     public function rules()
     {
         return [
-            'gastos'   => 'array',
-            'gastos.*' => 'integer|exists:gastos,id'
+            'gastos'      => 'nullable|array',
+            'gastos.*'    => 'nullable|integer|exists:gastos,id',
+            'observation' => 'nullable|string'
         ];
     }
 }
