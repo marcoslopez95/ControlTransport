@@ -57,6 +57,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     /** routes para Travel **/
     Route::apiResource('travel', \App\Http\Controllers\Travel\TravelController::class)->except(['store']);
+
+    /** routes para Gastos **/
+    Route::apiResource('gastos', \App\Http\Controllers\Gastos\GastosController::class);
 });
 
 /** routes para Auth **/

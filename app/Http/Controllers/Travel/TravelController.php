@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Travel;
 
 use Illuminate\Http\Request;
 use App\Core\CrudController;
+use App\Http\Requests\Travel\UpdateTravelRequest;
 use App\Services\Travel\TravelService;
 /** @property TravelService $service */
 class TravelController extends CrudController
@@ -21,7 +22,7 @@ class TravelController extends CrudController
         return parent::_show($id);
     }
 
-    public function update($id, Request $request){
+    public function update($id, UpdateTravelRequest $request){
         return parent::_update($id, $request);
     }
 

@@ -46,6 +46,7 @@ class LiquidationService extends CrudService
                 throw new Exception('El vehiculo no tiene viajes iniciados');
             }
         }
+
         $total_liquidation = $request->pasajeros * $request->precio_pasaje;
         $default_coin      = $this->coin_repo->defaultCoin();
 
