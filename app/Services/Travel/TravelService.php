@@ -11,6 +11,7 @@ namespace App\Services\Travel;
 use App\Core\CrudService;
 use App\Models\Coin;
 use App\Models\Liquidation;
+use App\Models\Office;
 use App\Repositories\Travel\TravelRepository;
 use Illuminate\Http\Request;
 
@@ -39,6 +40,13 @@ class TravelService extends CrudService
             $travel['debe']  = $sumatorias['debe'];
             $m = [];
             $travel['total'] = $sumatorias['total'] - $total_gastos;
+            $travel->liquidations->transform(function($item,$value){
+                $oficina_origen = Office::find($item->office_origin);
+                $oficina_destino = Office::find($item->office_destiny);
+                $item['name_office_origin'] = $oficina_origen->name;
+                $item['name_office_destiny'] = $oficina_destino->name;
+                return $item;
+            });
             foreach ($travel->montos as $monto) {
                 $monto['coin_name'] = (Coin::find($monto->coin_id))->name;
                 if (!array_key_exists($monto['coin_name'], $m)) {
@@ -90,6 +98,13 @@ class TravelService extends CrudService
         $travel['debe'] = $sumatorias['debe'];
         $m = [];
         $travel['total'] = $sumatorias['total'] - $total_gastos;
+        $travel->liquidations->transform(function($item,$value){
+            $oficina_origen = Office::find($item->office_origin);
+            $oficina_destino = Office::find($item->office_destiny);
+            $item['name_office_origin'] = $oficina_origen->name;
+            $item['name_office_destiny'] = $oficina_destino->name;
+            return $item;
+        });
         foreach ($travel->montos as $monto) {
             $monto['coin_name'] = (Coin::find($monto->coin_id))->name;
             if (!array_key_exists($monto['coin_name'], $m)) {
