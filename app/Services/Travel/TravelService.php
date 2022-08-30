@@ -97,8 +97,8 @@ class TravelService extends CrudService
                 $m[$monto['coin_name']]['total'] = 0;
                 $m[$monto['coin_name']]['recibido'] = 0;
             }
-            $m[$monto['coin_name']]['total'] += $monto->neto;
-            $m[$monto['coin_name']]['recibido'] += $monto->received;
+            $m[$monto['coin_name']]['total'] += $monto->quantity;
+
         }
         unset($travel['montos']);
         $travel['montos'] = $m;
