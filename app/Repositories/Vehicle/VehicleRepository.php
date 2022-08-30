@@ -8,6 +8,7 @@ namespace App\Repositories\Vehicle;
 
 use App\Core\CrudRepository;
 use App\Models\Vehicle;
+use Illuminate\Support\Facades\Auth;
 
 /** @property Vehicle $model */
 class VehicleRepository extends CrudRepository
@@ -20,7 +21,12 @@ class VehicleRepository extends CrudRepository
 
     public function _index($request = null, $user = null)
     {
-        $vehicles = $this->model::filter($request)->orderBy('id','desc')->get();
+        if(Auth::user()->role_id == 1){
+            $vehicles = $this->model::filter($request)->orderBy('id','desc')->get();
+        }else{
+            $vehicles = $this->model::filter($request)->socio()->orderBy('id','desc')->get();
+
+        }
         return $vehicles;
     }
 

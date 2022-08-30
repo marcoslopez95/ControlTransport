@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use App\Core\CrudModel;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 
 class Vehicle extends CrudModel
 {
@@ -33,6 +34,15 @@ class Vehicle extends CrudModel
                     return $q
                         ->where('plate',$value);
                 });
-            });
+            })
+            ->when($request->socio, function(Builder $query,$socio){
+                return $query->where('partner_id',$socio);
+            })
+            ;
+    }
+
+    public function scopeSocio(Builder $builder){
+        $user = Auth::user();
+        return $builder->where('partner_id',$user->partner_id);
     }
 }

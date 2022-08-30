@@ -24,7 +24,8 @@ class User extends Authenticatable
         'last_name',
         'email',
         'password',
-        'role_id'
+        'role_id',
+        'partner_id'
     ];
 
     /**
@@ -52,4 +53,5 @@ class User extends Authenticatable
             set: fn($value) => Hash::make($value)
         );
     }
+
 }

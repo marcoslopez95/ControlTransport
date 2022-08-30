@@ -18,4 +18,11 @@ class RoleRepository extends CrudRepository
         parent::__construct($model);
     }
 
+    public function _index($request = null, $user = null)
+    {
+        $roles = $this->model::filter($request)->get();
+
+        return $roles;
+    }
+
 }

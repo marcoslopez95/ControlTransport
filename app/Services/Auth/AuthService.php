@@ -26,6 +26,8 @@ class AuthService extends CrudService
         'last_name',
         'email',
         'password',
+        'role_id',
+        'partner_id'
     ];
 
     public function __construct(AuthRepository $repository)
@@ -60,7 +62,7 @@ class AuthService extends CrudService
         $json = [
             'token' => $token,
             'name'  => $user->first_name,
-            'role'  => 1
+            'role'  => $user->role_id
         ];
         return $json;
     }

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use App\Core\CrudModel;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 
 class Liquidation extends CrudModel
 {
@@ -52,6 +53,13 @@ class Liquidation extends CrudModel
                 return $q->where('travel_id',$travel_id);
             })
             ;
+    }
+
+    public function scopeSocio(Builder $builder){
+        return $builder->whereHas('vehicle',function(Builder $query){
+            $user = Auth::user();
+            return $query->where('partner_id',$user->partner_id);
+        });
     }
 
     /**

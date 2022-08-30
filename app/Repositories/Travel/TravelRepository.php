@@ -8,6 +8,7 @@ namespace App\Repositories\Travel;
 
 use App\Core\CrudRepository;
 use App\Models\Travel;
+use Illuminate\Support\Facades\Auth;
 
 /** @property Travel $model */
 class TravelRepository extends CrudRepository
@@ -20,7 +21,12 @@ class TravelRepository extends CrudRepository
 
     public function _index($request = null, $user = null)
     {
-        $travels = $this->model::filter($request)->orderBy('id','desc')->get();
+        if(Auth::user()->role_id == 1){
+            $travels = $this->model::filter($request)->orderBy('id','desc')->get();
+        }else{
+            $travels = $this->model::filter($request)->socio()->orderBy('id','desc')->get();
+
+        }
 
         return $travels;
     }
