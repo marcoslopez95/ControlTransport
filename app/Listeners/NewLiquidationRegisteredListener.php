@@ -44,6 +44,7 @@ class NewLiquidationRegisteredListener
         }
         if($type_travel == 'Llegada'){
             $travel->status = 'Finalizado';
+            $travel->date_end = $liquidation->date;
             $travel->save();
         }
         $liquidation->travel_id = $travel->id;
