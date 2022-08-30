@@ -43,7 +43,6 @@ class TravelService extends CrudService
                 $monto['coin_name'] = (Coin::find($monto->coin_id))->name;
                 if (!array_key_exists($monto['coin_name'], $m)) {
                     $m[$monto['coin_name']]['total'] = 0;
-                    $m[$monto['coin_name']]['recibido'] = 0;
                 }
                 $m[$monto['coin_name']]['total'] += $monto->quantity;
             }
@@ -95,7 +94,6 @@ class TravelService extends CrudService
             $monto['coin_name'] = (Coin::find($monto->coin_id))->name;
             if (!array_key_exists($monto['coin_name'], $m)) {
                 $m[$monto['coin_name']]['total'] = 0;
-                $m[$monto['coin_name']]['recibido'] = 0;
             }
             $m[$monto['coin_name']]['total'] += $monto->quantity;
 
