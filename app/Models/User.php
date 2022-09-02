@@ -54,4 +54,13 @@ class User extends Authenticatable
         );
     }
 
+    /**
+     * Get the socio that owns the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function socio()
+    {
+        return $this->belongsTo(Partner::class);
+    }
 }
