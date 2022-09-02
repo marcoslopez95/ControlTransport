@@ -105,7 +105,7 @@ class LiquidationService extends CrudService
     {
         $liquidations = $this->repository->_index($request);
 
-        $liquidations->load(['additionals','ammounts','vehicle','coin']);
+        $liquidations->load(['additionals','ammounts.coin','vehicle','coin']);
 
         $liquidations->transform(function($item,$value){
             $oficina_origen = Office::find($item->office_origin);
@@ -127,7 +127,7 @@ class LiquidationService extends CrudService
         $liquidation['name_office_origin'] = $oficina_origen->name;
         $liquidation['name_office_destiny'] = $oficina_destino->name;
 
-        $liquidation->load(['additionals','ammounts','vehicle','coin']);
+        $liquidation->load(['additionals','ammounts.coin','vehicle','coin']);
 
         foreach($liquidation->additionals as $additional){
             unset($additional['pivot']);
