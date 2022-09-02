@@ -31,7 +31,7 @@ class TravelService extends CrudService
     {
         $travels = $this->repository->_index($request);
 
-        $travels->load(['vehicle', 'montos', 'gastos']);
+        $travels->load(['vehicle', 'montos', 'gastos.coin']);
 
         foreach ($travels as $travel) {
             $sumatorias      = self::SumTotalLiquidations($travel->liquidations);
@@ -90,7 +90,7 @@ class TravelService extends CrudService
     public function _show($id, $request = null)
     {
         $travel = $this->repository->_show($id);
-        $travel->load(['vehicle', 'montos', 'gastos']);
+        $travel->load(['vehicle', 'montos', 'gastos.coin']);
 
         $sumatorias = self::SumTotalLiquidations($travel->liquidations);
         $total_gastos    = self::TotalGastos($travel->gastos);

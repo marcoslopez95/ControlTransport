@@ -22,4 +22,14 @@ class Gasto extends CrudModel
                 return $query->where('description','ilike',"%$description%");
             });
     }
+
+    /**
+     * Get the coin that owns the Gasto
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function coin()
+    {
+        return $this->belongsTo(Coin::class);
+    }
 }
