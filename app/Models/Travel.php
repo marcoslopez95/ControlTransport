@@ -49,7 +49,15 @@ class Travel extends CrudModel
         return $builder
             ->when($request->vehicle_id,function(Builder $q,$vehicleId){
                 return $q->where('vehicle_id',$vehicleId);
-            });
+            })
+            ->when(($request->date_start && $request->date_end),function(Builder $query) use ($request){
+                $start = $request->date_start;
+                $end   = $request->date_end;
+
+                return $query->whereBetween('date_start',[$start,$end])
+                    ->orWhereBetween('date_end',[$start,$end]);
+            })
+            ;
     }
 
     public function scopeSocio(Builder $builder){
