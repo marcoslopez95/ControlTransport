@@ -47,6 +47,9 @@ class Travel extends CrudModel
 
     public function scopeFilter(Builder $builder, $request){
         return $builder
+            ->when($request->travel_id,function(Builder $query,$travel_id){
+                return $query->where('id',$travel_id);
+            })
             ->when($request->vehicle_id,function(Builder $q,$vehicleId){
                 return $q->where('vehicle_id',$vehicleId);
             })

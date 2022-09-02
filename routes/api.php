@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Partner\PartnerController;
+use App\Http\Controllers\Travel\ReportTravelController;
 use App\Http\Controllers\Travel\TravelController;
 use App\Http\Controllers\User\UserController;
 use Illuminate\Http\Request;
@@ -57,6 +58,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     /** routes para Travel **/
     Route::apiResource('travel', \App\Http\Controllers\Travel\TravelController::class)->except(['store']);
+    Route::get('report/travels', ReportTravelController::class);
 
     /** routes para Gastos **/
     Route::apiResource('gastos', \App\Http\Controllers\Gastos\GastosController::class);
