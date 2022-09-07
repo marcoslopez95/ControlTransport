@@ -10,6 +10,7 @@ use App\Models\Office;
 use App\Models\Travel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Mpdf\Mpdf;
 
 class ReportTravelController extends Controller
 {
@@ -26,7 +27,19 @@ class ReportTravelController extends Controller
         self::getTravels($request);
         self::ParserTravels();
         self::generateHtml();
-        return $this->html;
+        return self::generatePdf();
+    }
+
+    private function generatePdf(){
+        $pdf = new  Mpdf();
+        $pdf->WriteHTML($this->html);
+        $nombre_archivo = 'reporte-viaje-control-'. ($this->object->first())->vehicle->num_controller;
+        header('Content-Type: application/pdf');
+        header("Content-Disposition: inline; filename='$nombre_archivo.pdf'");
+        return $pdf->Output("$nombre_archivo.pdf", 'I');
+
+        $pdf->Output();
+
     }
 
     private function generateHtml(){

@@ -123,67 +123,79 @@
         </tfoot>
     </table>
     <div style="height: 35px"></div>
-    <div style="display: flex">
-        <div style='' width='350px'>
 
-            {{-- gastos --}}
-            <div><b>Gastos</b></div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>
-                            Descripción
-                        </th>
-                        <th>
-                            Cantidad
-                        </th>
-                        <th>
-                            Moneda
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($travel->gastos as $gasto)
+
+    <table style="width: 100%">
+        <tr>
+            <td style="border: 0">
+                <table>
+                    <thead>
                         <tr>
-                            <td>{{ $gasto->description }}</td>
-
-                            <td>{{ $gasto->quantity }}</td>
-
-                            <td>{{ $gasto->coin->symbol }}</td>
+                            <th colspan="3">Gastos</th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-        <div style="width: 20%"></div>
-        <div style='margin-right: 0; ' >
-
-            {{-- gastos --}}
-            <div><b>En caja</b></div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>
-                            Cantidad
-                        </th>
-                        <th>
-                            Moneda
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($travel->caja as $symbol => $gasto)
                         <tr>
-                            <td>{{ $symbol }}</td>
-
-                            <td>{{ $gasto }}</td>
+                            <th>
+                                Descripción
+                            </th>
+                            <th>
+                                Cantidad
+                            </th>
+                            <th>
+                                Moneda
+                            </th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-    </div>
-        <footer style="margin-top:15px; text-align: left;" align='left'>
-            Observaciones: {{ $travel->observation }}
-        </footer>
-    @endsection
+                    </thead>
+                    <tbody>
+                        @foreach ($travel->gastos as $gasto)
+                            <tr>
+                                <td>{{ $gasto->description }}</td>
+
+                                <td>{{ $gasto->quantity }}</td>
+
+                                <td>{{ $gasto->coin->symbol }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </td>
+            <td style="border: 0">
+                {{-- gastos --}}
+                <table>
+                    <thead>
+                        <tr>
+                            <th colspan="2">
+                                En caja
+                            </th>
+                        </tr>
+                        <tr>
+                            <th>
+                                Cantidad
+                            </th>
+                            <th>
+                                Moneda
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($travel->caja as $symbol => $gasto)
+                            <tr>
+                                <td>{{ $symbol }}</td>
+
+                                <td>{{ $gasto }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+    </table>
+    {{-- gastos --}}
+
+
+
+
+
+    <footer style="margin-top:15px; text-align: left;" align='left'>
+        Observaciones: {{ $travel->observation }}
+    </footer>
+@endsection
