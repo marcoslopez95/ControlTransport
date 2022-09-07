@@ -11,6 +11,7 @@ use App\Core\CrudService;
 use App\Events\NewLiquidationRegisteredEvent;
 use App\Models\Additional;
 use App\Models\Coin;
+use App\Models\Liquidation;
 use App\Models\Office;
 use App\Models\Travel;
 use App\Repositories\Additional\AdditionalRepository;
@@ -153,5 +154,15 @@ class LiquidationService extends CrudService
 
         return self::_show($id);
 
+    }
+
+    public function _destroy($id)
+    {
+        $liquidation = Liquidation::find($id);
+
+        if($liquidation->viaje->status == 'Finalizado'){
+            throw new Exception('No se puede eliminar una liquidación si el viaje finalizó');
+        }
+        return parent::_destroy($id);
     }
 }

@@ -126,4 +126,8 @@ class Liquidation extends CrudModel
     public function ammounts(){
         return $this->morphMany(Amount::class,'amountable');
     }
+
+    public function viaje(){
+        return $this->belongsTo(Travel::class);
+    }
 }
