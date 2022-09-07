@@ -19,7 +19,8 @@ class Liquidation extends CrudModel
         'falta',
         'pasajeros',
         'office_origin',
-        'office_destiny'
+        'office_destiny',
+        'type_travel',
     ];
 
     /**
