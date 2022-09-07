@@ -127,7 +127,7 @@ class LiquidationService extends CrudService
         $liquidation['name_office_origin'] = $oficina_origen->name;
         $liquidation['name_office_destiny'] = $oficina_destino->name;
 
-        $liquidation->load(['additionals','ammounts.coin','vehicle','coin']);
+        $liquidation->load(['additionals.coin','ammounts.coin','vehicle','coin']);
 
         foreach($liquidation->additionals as $additional){
             unset($additional['pivot']);
