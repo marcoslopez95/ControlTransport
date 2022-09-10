@@ -120,11 +120,11 @@ class ReportTravelController extends Controller
     private function getTravels(Request $request): void
     {
         $this->object = $this->travels::filter($request);
-        if (Auth::user()->role_id !== 1) {
-            $this->object = $this->object->socio()->get();
-        } else {
+        // if (Auth::user()->role_id !== 1) {
+        //     $this->object = $this->object->socio()->get();
+        // } else {
             $this->object = $this->object->get();
-        }
+        // }
 
         $this->object->load([
             'montos',
