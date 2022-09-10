@@ -32,7 +32,12 @@ class TravelService extends CrudService
         $travels = $this->repository->_index($request);
 
         $coins = Coin::all();
-        $travels->load(['vehicle', 'montos', 'gastos.coin',]);
+        $travels->load([
+            'vehicle',
+            'montos',
+            'gastos.coin',
+            'liquidations.additionals'
+        ]);
 
         foreach ($travels as $travel) {
             $sumatorias      = self::SumTotalLiquidations($travel->liquidations);

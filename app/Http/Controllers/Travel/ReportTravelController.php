@@ -52,19 +52,24 @@ class ReportTravelController extends Controller
     private function ParserTravels(){
         $monedas = Coin::all();
         $oficinas = Office::all();
+
         foreach ($this->object as $travel) {
             $monto_sum = [];
             $recorrido = '';
+
+            //agregando monedas -> monto al viaje
             $travel->montos->map(function ($item) use ($monedas, &$monto_sum) {
                 $moneda = $monedas->where('id', $item->coin_id)->first();
-
                 if (!array_key_exists($moneda->symbol, $monto_sum)) {
                     $monto_sum[$moneda->symbol] = 0;
                 }
                 $monto_sum[$moneda->symbol] += $item->quantity;
             });
+
             unset($travel['montos']);
             $travel['montos'] = $monto_sum;
+
+            // agregando simbolo de la moneda a las liquidaciones
             $travel->liquidations->map(function ($liquidation) use ($monedas){
                 $liquidation->ammounts->transform(function($item) use ($monedas){
                     $moneda = $monedas->find($item['coin_id']);
@@ -73,6 +78,7 @@ class ReportTravelController extends Controller
                 });
                 return $liquidation;
             });
+
             $travel->liquidations->transform(function (Liquidation $liquidation) use ($oficinas, &$recorrido) {
                 $office_start = $oficinas->find($liquidation->office_origin);
                 $office_end = $oficinas->find($liquidation->office_destiny);
@@ -94,7 +100,7 @@ class ReportTravelController extends Controller
                         $acum += $additional->quantity;
                     }
                 }
-                $liquidation->gastos_cantidad = $base;
+                $liquidation->gastos_cantidad = $acum;
                 unset($liquidation['additionals']);
                 return $liquidation;
             });
@@ -113,7 +119,7 @@ class ReportTravelController extends Controller
                     $caja[$gasto->coin->symbol] -= $gasto->quantity;
                 }
             }
-
+            $caja['USD'] -= $travel->liquidations->sum('gastos_cantidad');
             $travel['caja'] = $caja;
         }
     }
