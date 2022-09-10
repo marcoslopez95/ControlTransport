@@ -74,6 +74,7 @@ return [
             'port' => env('DB_PORT', '5432'),
             //'database' => env('DB_DATABASE', 'forge'),
             'database' => env('APP_ENV') == 'local' || env('APP_ENV') == 'testing' ? env('DB_DATABASE', 'forge'):ltrim($DATABASE_URL["path"], "/"),
+            //'database' => ltrim($DATABASE_URL["path"], "/"),
             'username' => env('DB_USERNAME', 'forge'),
             'password' => env('DB_PASSWORD', ''),
             'charset' => 'utf8',

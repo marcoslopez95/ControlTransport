@@ -31,7 +31,8 @@ class TravelService extends CrudService
     {
         $travels = $this->repository->_index($request);
 
-        $travels->load(['vehicle', 'montos', 'gastos.coin']);
+        $coins = Coin::all();
+        $travels->load(['vehicle', 'montos', 'gastos.coin',]);
 
         foreach ($travels as $travel) {
             $sumatorias      = self::SumTotalLiquidations($travel->liquidations);
@@ -40,7 +41,9 @@ class TravelService extends CrudService
             $travel['debe']  = $sumatorias['debe'];
             $m = [];
             $travel['total'] = $sumatorias['total'] - $total_gastos;
-            $travel->liquidations->transform(function($item,$value){
+            $travel->liquidations->transform(function($item,$value) use ($coins){
+                $coin = $coins->find($item->coin_id);
+                $item['coin_name'] = $coin->name;
                 $oficina_origen = Office::find($item->office_origin);
                 $oficina_destino = Office::find($item->office_destiny);
                 $item['name_office_origin'] = $oficina_origen->name;
@@ -92,13 +95,17 @@ class TravelService extends CrudService
         $travel = $this->repository->_show($id);
         $travel->load(['vehicle', 'montos', 'gastos.coin']);
 
+        $coins = Coin::all();
+
         $sumatorias = self::SumTotalLiquidations($travel->liquidations);
         $total_gastos    = self::TotalGastos($travel->gastos);
         $travel['total'] = $sumatorias['total'];
         $travel['debe'] = $sumatorias['debe'];
         $m = [];
         $travel['total'] = $sumatorias['total'] - $total_gastos;
-        $travel->liquidations->transform(function($item,$value){
+        $travel->liquidations->transform(function($item,$value) use ($coins){
+            $coin = $coins->find($item->coin_id);
+            $item['coin_name'] = $coin->name;
             $oficina_origen = Office::find($item->office_origin);
             $oficina_destino = Office::find($item->office_destiny);
             $item['name_office_origin'] = $oficina_origen->name;
@@ -122,6 +129,10 @@ class TravelService extends CrudService
     {
         $travel = $this->repository->_show($id);
 
-        return $this->repository->_update($id, $request->only('observation'));
+        $travel = $this->repository->_update($id, $request->only('observation'));
+
+        $travel->gastos()->attach($request->gastos);
+
+        return $travel;
     }
 }
