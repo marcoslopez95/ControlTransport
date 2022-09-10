@@ -27,7 +27,7 @@ class ReportTravelController extends Controller
         self::getTravels($request);
         self::ParserTravels();
         self::generateHtml();
-        // return self::generatePdf();
+        return self::generatePdf();
         return $this->html;
     }
 
