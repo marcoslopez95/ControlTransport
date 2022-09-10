@@ -77,7 +77,7 @@
                         {{ $liquidation->office_origin_name }}
                     </td>
                     <td align="center">
-                        {{ $liquidation->destiny_name }}
+                        {{ $liquidation->office_destiny_name }}
                     </td>
                     <td align="center">
                         {{ $liquidation->pasajeros }}
