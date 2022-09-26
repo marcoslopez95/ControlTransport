@@ -20,6 +20,8 @@ class Liquidation extends CrudModel
         'pasajeros',
         'office_origin',
         'office_destiny',
+        "fecha_express",
+        "number_express",
         'type_travel',
     ];
 

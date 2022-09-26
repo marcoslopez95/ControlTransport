@@ -83,8 +83,11 @@ class LiquidationTest extends TestCase
 
         $date = Carbon::now()->format('Y-m-d');
         $response = $this->postJson('api/liquidations', [
+            'type_travel'   => "Salida",
             'vehicle_id'    => $vehicle[0]->id,
             'precio_pasaje' => 12,
+            "fecha_express" => "2022-08-16",
+            "number_express"=> "001",
             'coin_id'       => $coin[0]->id,
             'date'          => $date,
             'pasajeros'     => 3,
@@ -123,6 +126,9 @@ class LiquidationTest extends TestCase
                 'data'    => [
                     'id'            => 1,
                     'total'         => 26.68,
+                    "type_travel"   => "Salida",
+                    "fecha_express" => "2022-08-16",
+                    "number_express"=> "001",
                     'vehicle_id'    => $vehicle[0]->id,
                     'precio_pasaje' => 12,
                     'coin_id'       => $coin[0]->id,
@@ -151,7 +157,7 @@ class LiquidationTest extends TestCase
                         ],
                     ]
                 ],
-                'count'   => 12
+                'count'   => 15
             ]);
         $liquidation = Liquidation::first();
 
@@ -165,6 +171,8 @@ class LiquidationTest extends TestCase
         $this->assertEquals(0, $liquidation->falta);
         $this->assertEquals($offices[0]->id, $liquidation->office_origin);
         $this->assertEquals($offices[1]->id, $liquidation->office_destiny);
+        $this->assertEquals("14-08-2022",$this->liquidation->fecha_express);
+        $this->assertEquals("001",$this->liquidation->number_express);
         ##############################
 
         # Verificando Relaciones
