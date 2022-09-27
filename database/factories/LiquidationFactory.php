@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Additional;
+use App\Models\Amount;
 use App\Models\Coin;
 use App\Models\Office;
 use App\Models\Vehicle;
@@ -21,6 +23,7 @@ class LiquidationFactory extends Factory
     public function definition()
     {
         return [
+            'type_travel'    => $this->faker->optional(.8,'Entrada')->randomElement(['Salida']),
             'vehicle_id'     => Vehicle::factory(),
             'coin_id'        => Coin::factory(),
             'office_origin'  => Office::factory(),
@@ -32,6 +35,8 @@ class LiquidationFactory extends Factory
                 return $attributes['precio_pasaje'] * $attributes['total'];
             },
             'falta'          => $this->faker->optional()->randomNumber(2),
+            'additionals'    => Additional::factory(3),
+            'ammounts'       => Amount::factory(3)
         ];
     }
 }

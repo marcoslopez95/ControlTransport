@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Coin;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,6 +19,7 @@ class AdditionalFactory extends Factory
     {
         return [
             'description'   =>$this->faker->word(),
+            'coin_id'       => Coin::factory(),
             'percent'       =>$this->faker->optional()->randomFloat(2),
             'type'          =>$this->faker->randomElement(['Descuento','Retencion']),
         ];

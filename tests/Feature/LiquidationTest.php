@@ -9,6 +9,7 @@ use App\Models\Office;
 use App\Models\User;
 use App\Models\Vehicle;
 use Carbon\Carbon;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\DB;
@@ -16,7 +17,7 @@ use Tests\TestCase;
 
 class LiquidationTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
 
     private function createToken()
     {
@@ -82,7 +83,8 @@ class LiquidationTest extends TestCase
         ]);
 
         $date = Carbon::now()->format('Y-m-d');
-        $response = $this->postJson('api/liquidations', [
+
+        $data = [
             'type_travel'   => "Salida",
             'vehicle_id'    => $vehicle[0]->id,
             'precio_pasaje' => 12,
@@ -114,7 +116,8 @@ class LiquidationTest extends TestCase
                     'received'   => 5,
                 ],
             ]
-        ], [
+        ];
+        $response = $this->postJson('api/liquidations',$data , [
             'Authorization' => 'Bearer ' . self::createToken()
         ]);
 

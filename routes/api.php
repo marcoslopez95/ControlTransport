@@ -61,6 +61,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     /** routes para Gastos **/
     Route::apiResource('gastos', \App\Http\Controllers\Gastos\GastosController::class);
+
+    /** routes para Rate **/
+    Route::apiResource('rates', \App\Http\Controllers\Rate\RateController::class);
+
 });
 Route::get('report/travels', ReportTravelController::class);
 
