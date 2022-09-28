@@ -23,6 +23,7 @@ class Liquidation extends CrudModel
         "fecha_express",
         "number_express",
         'type_travel',
+        'status'
     ];
 
     /**

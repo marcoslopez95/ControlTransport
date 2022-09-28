@@ -45,4 +45,12 @@ class Vehicle extends CrudModel
         $user = Auth::user();
         return $builder->where('partner_id',$user->partner_id);
     }
+
+    public function travels(){
+        return $this->hasMany(Travel::class);
+    }
+
+    public function accountMovs(){
+        return $this->hasMany(AccountMov::class);
+    }
 }

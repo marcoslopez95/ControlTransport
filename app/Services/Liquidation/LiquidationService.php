@@ -54,12 +54,18 @@ class LiquidationService extends CrudService
         $neto = self::calculateAdditionals($total_liquidation, $request->additionals);
         $request['total'] = $neto;
 
+        if($request->falta > $neto){
+            throw new Exception('La cantidad faltante es superior al total de la liquidación. Recuerde que la cantidad faltante debe estar expresada en dólares');
+        }
+
+        $request['status'] = $request->falta != 0 ? 'Por Pagar' : 'Pagada';
         $data_liquidation = $request->except(['ammounts','additionals']);
 
         $liquidation   = $this->repository->_store($data_liquidation);
         $request['id'] = $liquidation->id;
         $this->repository->saveAdditionals($liquidation->id,$request->only('additionals'));
         $this->repository->saveAmount($liquidation->id,$request->only('ammounts'));
+
         event(new NewLiquidationRegisteredEvent($liquidation,$request->type_travel));
         return $request->all();
 
@@ -72,7 +78,7 @@ class LiquidationService extends CrudService
             return 0;
         }
 
-        $additionals = Additional::whereIn('id',$additionals)->get();
+        $additionals = Additional::whereIn('id',$additionals)->orderBy('type','asc')->get();
 
         if($additionals->count() == 0){
             return 0;
@@ -139,8 +145,14 @@ class LiquidationService extends CrudService
     public function _update($id, Request $request)
     {
 
+        $bool = $this->_show($id);
+
+        if($bool->viaje->status === 'Finalizado'){
+            throw new \Exception('No se puede editar una liquidación que tiene el viaje finalizado');
+        }
         $total_liquidation = $request->pasajeros * $request->precio_pasaje;
         $default_coin      = $this->coin_repo->defaultCoin();
+        $request['status'] = $request->falta != 0 ? 'Por Pagar' : 'Pagada';
 
         $neto = self::calculateAdditionals($total_liquidation, $request->additionals);
         $request['total'] = $neto;

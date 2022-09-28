@@ -40,7 +40,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     /** routes para Vehicle **/
     Route::apiResource('vehicles', \App\Http\Controllers\Vehicle\VehicleController::class);
-
+    Route::get('/caja-chica/{vehicle}',[\App\Http\Controllers\Vehicle\VehicleController::class, 'cajaChicaByVehicle'])
+    ->name('api.v1.show-account-movs')
+    ;
     /** routes para Coin **/
     Route::apiResource('coins', \App\Http\Controllers\Coin\CoinController::class);
 

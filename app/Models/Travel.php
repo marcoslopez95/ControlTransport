@@ -15,6 +15,7 @@ class Travel extends CrudModel
         'date_end',
         'vehicle_id',
         'observation',
+        'open'
     ];
 
     // public function amountable(){

@@ -13,11 +13,16 @@ use App\Models\Coin;
 use App\Models\Liquidation;
 use App\Models\Office;
 use App\Repositories\Travel\TravelRepository;
+use App\Traits\TravelTrait;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 /** @property TravelRepository $repository */
 class TravelService extends CrudService
 {
+
+    use TravelTrait;
 
     protected $name = "travel";
     protected $namePlural = "travel";
@@ -108,6 +113,7 @@ class TravelService extends CrudService
         $travel['debe'] = $sumatorias['debe'];
         $m = [];
         $travel['total'] = $sumatorias['total'] - $total_gastos;
+
         $travel->liquidations->transform(function($item,$value) use ($coins){
             $coin = $coins->find($item->coin_id);
             $item['coin_name'] = $coin->name;
@@ -117,6 +123,7 @@ class TravelService extends CrudService
             $item['name_office_destiny'] = $oficina_destino->name;
             return $item;
         });
+
         foreach ($travel->montos as $monto) {
             $monto['coin_name'] = (Coin::find($monto->coin_id))->name;
             if (!array_key_exists($monto['coin_name'], $m)) {
@@ -133,10 +140,18 @@ class TravelService extends CrudService
     public function _update($id, Request $request)
     {
         $travel = $this->repository->_show($id);
+        if(!$travel->open){
+            throw new \Exception('¡No se puede editar un viaje cerrado!');
+        }
+
+        if(!self::verificarGastosYTotal($travel)){
+            throw new \Exception('¡Los gastos superan el monto total del viaje!');
+        }
 
         $travel = $this->repository->_update($id, $request->only('observation'));
 
-        $travel->gastos()->attach($request->gastos);
+        $travel->gastos()->sync($request->gastos);
+
 
         return $travel;
     }
