@@ -104,7 +104,7 @@ class TravelService extends CrudService
     public function _show($id, $request = null)
     {
         $travel = $this->repository->_show($id);
-        $travel->load(['vehicle', 'montos', 'gastos.coin','drivers',]);
+        $travel->load(['vehicle', 'montos', 'gastos.coin','drivers']);
 
         $coins = Coin::all();
 
