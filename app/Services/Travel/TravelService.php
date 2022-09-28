@@ -41,6 +41,7 @@ class TravelService extends CrudService
             'vehicle',
             'montos',
             'gastos.coin',
+            'drivers',
             'liquidations.additionals'
         ]);
 
@@ -103,7 +104,7 @@ class TravelService extends CrudService
     public function _show($id, $request = null)
     {
         $travel = $this->repository->_show($id);
-        $travel->load(['vehicle', 'montos', 'gastos.coin']);
+        $travel->load(['vehicle', 'montos', 'gastos.coin','drivers',]);
 
         $coins = Coin::all();
 
@@ -148,10 +149,11 @@ class TravelService extends CrudService
             throw new \Exception('¡Los gastos superan el monto total del viaje!');
         }
 
-        $travel = $this->repository->_update($id, $request->only('observation'));
+        $travel = $this->repository->_update($id, $request->only('observation','open'));
 
         $travel->gastos()->sync($request->gastos);
 
+        $travel->drivers()->sync($request->drivers);
 
         return $travel;
     }

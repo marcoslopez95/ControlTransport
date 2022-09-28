@@ -18,6 +18,9 @@ class Travel extends CrudModel
         'open'
     ];
 
+    public function drivers(){
+        return $this->belongsToMany(Driver::class);
+    }
     // public function amountable(){
     //     return $this->morphMany(Amount::class,'amountable');
     // }

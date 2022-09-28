@@ -25,4 +25,8 @@ class Driver extends CrudModel
                 });
             });
     }
+
+    public function travels(){
+        return $this->belongsToMany(Travel::class);
+    }
 }
