@@ -31,6 +31,7 @@
             <div style="float: right">
                 <b>Fecha de Llegada: {{ $travel->date_end }}</b>
             </div>
+
         </div>
     </div>
 
@@ -61,6 +62,9 @@
                         {{ $key }}
                     </th>
                 @endforeach
+                <th>
+                    Por Pagar
+                </th>
             </tr>
         </thead>
         <tbody>
@@ -103,6 +107,9 @@
                             {{ $item->quantity }}
                         </td>
                     @endforeach
+                    <td align="center">
+                        {{ $liquidation->falta }}
+                    </td>
                 </tr>
             @endforeach
         </tbody>
@@ -118,7 +125,7 @@
                         {{ $acum_coins[$key] }}
                     </th>
                 @endforeach
-
+                <th>{{ $travel->liquidations->sum('falta') }}</th>
             </tr>
         </tfoot>
     </table>
@@ -196,6 +203,25 @@
 
 
     <footer style="margin-top:15px; text-align: left;" align='left'>
+    <table align="center">
+        <tr>
+            <td align="center" colspan="3"><b>Choferes</b></td>
+        </tr>
+        <tr>
+            <td><b>Nombre</b></td>
+            <td><b>Apellido</b></td>
+            <td><b>Cedula</b></td>
+        </tr>
+        @foreach ($travel->drivers as $driver)
+        <tr>
+            <td>{{$driver->first_name}}</td>
+            <td>{{$driver->last_name}}</td>
+            <td>{{$driver->ci}}</td>
+        </tr>
+        @endforeach
+
+    </table>
+    <br>
         Observaciones: {{ $travel->observation }}
     </footer>
 @endsection
