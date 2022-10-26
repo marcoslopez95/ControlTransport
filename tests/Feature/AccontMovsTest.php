@@ -20,8 +20,7 @@ class AccontMovsTest extends TestCase
 {
     use DatabaseTransactions,
         WithFaker,
-        TravelTrait
-        ;
+        TravelTrait;
 
     /**
      * @test
@@ -29,10 +28,10 @@ class AccontMovsTest extends TestCase
     public function show_account_movs_of_a_vehicle()
     {
         $vehicle = Vehicle::find(2);
-        $user = User::firstWhere('email','admin@controltransport.com');
+        $user = User::firstWhere('email', 'admin@controltransport.com');
         $response = $this
             ->actingAs($user)
-            ->getJson(route('api.v1.show-account-movs',[
+            ->getJson(route('api.v1.show-account-movs', [
                 'vehicle' => $vehicle->id
             ]));
 
@@ -56,5 +55,10 @@ class AccontMovsTest extends TestCase
             ]);
     }
 
-
+    /**
+     * @test
+     */
+    public function create_an_account_mov_successfully()
+    {
+    }
 }
