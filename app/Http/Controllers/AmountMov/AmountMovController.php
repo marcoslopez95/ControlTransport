@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Http\Controllers\AccountMov;
+namespace App\Http\Controllers\AmountMov;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\AccountMov;
+use App\Models\AmountMov;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 
-class AccountMovController extends Controller
+class AmountMovController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -20,8 +20,8 @@ class AccountMovController extends Controller
         try {
             DB::beginTransaction();
 
-            $account_mov = AccountMov::with([
-              'vehicle','amountMovs'
+            $amountMov = AmountMov::with([
+              'accountMov','coin'
             ])->orderBy('id', 'DESC')->get();
 
             DB::commit();
@@ -30,13 +30,13 @@ class AccountMovController extends Controller
             return response()->json([
               'data' => [
                 'code'   => $e->getCode(),
-                'title'  => [__('messages..accountMov.index.internal_error')],
+                'title'  => [__('messages..AmountMov.index.internal_error')],
                 'errors' => $e->getMessage()
               ]
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
           }
 
-          return ["list" => $account_mov, "total" => count($account_mov)];
+          return ["list" =>  $amountMov, "total" => count($amountMov)];
     }
 
     /**
@@ -50,9 +50,9 @@ class AccountMovController extends Controller
         try {
             DB::beginTransaction();
 
-            $id =  $this->createAccountMov($request);
+            $id =  $this->createAmountMov($request);
 
-            $response = AccountMov::where('id', $id)->first();
+            $response = AmountMov::where('id', $id)->first();
 
             DB::commit();
         } catch (\Exception $e) {
@@ -60,7 +60,7 @@ class AccountMovController extends Controller
             return response()->json([
                 'data' => [
                     'code'   => $e->getCode(),
-                    'title'  => [__('Erron al guardar movimiento de cuenta')],
+                    'title'  => [__('Erron al guardar movimiento')],
                     'errors' => $e->getMessage(),
                 ]
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -68,23 +68,22 @@ class AccountMovController extends Controller
 
         return response()->json(array(
             'success' => true,
-            'message' => 'movimiento de cuenta creado',
+            'message' => 'movimiento creado',
             'value'   => $response,
         ));
     }
 
-
-    protected function createAccountMov($request)
+    protected function createAmountMov($request)
     {
-        $account_mov = new AccountMov();
-         $account_mov->vehicle_id = $request->vehicle_id;
-         $account_mov->date = $request->date;
-         $account_mov->description = $request->description;
-         $account_mov->type = $request->type;
-         $account_mov->save();
+        $amountMov = new AmountMov();
+          $amountMov->coin_id = $request->coin_id;
+          $amountMov->quantity = $request->quantity;
+          $amountMov->account_mov_id = $request->account_mov_id;
+          $amountMov->save();
 
-        return  $account_mov->id;
+        return   $amountMov->id;
     }
+
     /**
      * Display the specified resource.
      *
@@ -95,7 +94,9 @@ class AccountMovController extends Controller
     {
         try {
             DB::beginTransaction();
-            $response = AccountMov::with(['vehicle','amountMovs'])
+            $response = AmountMov::with([
+                'accountMov','coin'
+              ])
                 ->where('id', $id)->first();
 
             DB::commit();
@@ -122,50 +123,7 @@ class AccountMovController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $account_mov = AccountMov::where('id', '=', $id)->first();
-        if (!$account_mov) {
-            return response()->json([
-                "errors" => [
-                    "message" => "No existe este movimiento",
-                ]
-            ], 422);
-        }
-
-        //$response;
-        try {
-            DB::beginTransaction();
-
-            $move = AccountMov::findOrFail($id);
-            $this->updateMove($move, $request);
-
-            $response = AccountMov::where('id', $id)->first();
-
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json([
-                'data' => [
-                    'code'   => $e->getCode(),
-                    'title'  => [__('Error al editar')],
-                    'errors' => $e->getMessage(),
-                ]
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-
-        return response()->json(array(
-            'success' => true,
-            'message' => 'movimiento  editado',
-            'value'   => $response,
-        ));
-    }
-
-    protected function updateMove($account_mov, $request)
-    {
-        $account_mov->vehicle_id = $request->vehicle_id ? $request->vehicle_id : $account_mov->vehicle_id;
-        $account_mov->date = $request->date ? $request->date : $account_mov->date;
-        $account_mov->description = $request->description ? $request->description : $account_mov->description;
-        $account_mov->type = $request->type ? $request->type : $account_mov->type;
-        $account_mov->update();
+        //
     }
 
     /**
@@ -179,7 +137,7 @@ class AccountMovController extends Controller
         try {
             DB::beginTransaction();
 
-            $lottery = AccountMov::findOrFail($id);
+            $lottery = AmountMov::findOrFail($id);
             $lottery->delete();
             DB::commit();
         } catch (\Exception $e) {
@@ -187,12 +145,13 @@ class AccountMovController extends Controller
             return response()->json([
                 'data' => [
                     'code'   => $e->getCode(),
-                    'title'  => [__('fallo al eliminar movimiento de cuenta')],
+                    'title'  => [__('fallo al eliminar movimiento')],
                     'errors' => $e->getMessage(),
                 ]
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
         return response()->json([
+            "succes"  =>true,
             "message"       => "movimiento eliminado",
         ]);
     }

@@ -32,6 +32,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('roles/{id}', [\App\Http\Controllers\Role\RoleController::class, '_update']);
     Route::delete('roles/{id}', [\App\Http\Controllers\Role\RoleController::class, '_destroy']);
 
+      /** routes para accountMove **/
+
+      Route::get('moves', [\App\Http\Controllers\Role\accountMove::class, 'index']);
+      Route::get('moves/{id}', [\App\Http\Controllers\Role\accountMove::class, 'show']);
+      Route::post('moves', [\App\Http\Controllers\Role\accountMove::class, 'store']);
+      Route::put('moves/{id}', [\App\Http\Controllers\Role\accountMove::class, 'update']);
+      Route::delete('moves/{id}', [\App\Http\Controllers\Role\accountMove::class, 'destroy']);
+
     /** routes para Partners **/
     Route::apiResource('partners', PartnerController::class);
 
