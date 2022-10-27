@@ -96,6 +96,15 @@ class LiquidationTest extends TestCase
             'falta'         => 0,
             'office_origin' => $offices[0]->id,
             'office_destiny' => $offices[1]->id,
+            'passengers'    => [
+                [
+                    'document' => '123',
+                    'first_name' => 'Marcos',
+                    'last_name' => 'Lopez',
+                    'coin_id' => 1,
+                    'ammount' => 123
+                ]
+            ],
             'additionals'   => [
                 $additional->id,
                 $additional2->id
@@ -117,9 +126,17 @@ class LiquidationTest extends TestCase
                 ],
             ]
         ];
-        $response = $this->postJson('api/liquidations',$data , [
-            'Authorization' => 'Bearer ' . self::createToken()
-        ]);
+
+        $user = User::firstWhere('email','admin@controltransport.com');
+
+        if($user == ''){
+            $response = $this->postJson('api/liquidations',$data , [
+                'Authorization' => 'Bearer ' . self::createToken()
+            ]);
+        }else{
+            $response = $this->actingAs($user)
+                            ->postJson('api/liquidations',$data);
+        }
 
         $response
             ->assertCreated()
@@ -186,6 +203,10 @@ class LiquidationTest extends TestCase
 
         // $rel_ammount = $liquidation->ammounts;
         $this->assertCount(2, $liquidation->ammounts);
+
+        $passengers = $liquidation->passengers;
+
+        $this->assertCount(1,$passengers);
     }
 
     public function test_mostrar_liquidacion_exitoso()
@@ -400,9 +421,9 @@ class LiquidationTest extends TestCase
                     ],
                 ]
             ]
-        , [
-            'Authorization' => 'Bearer ' . self::createToken()
-        ]);
+            , [
+                'Authorization' => 'Bearer ' . self::createToken()
+            ]);
 
         $liquidation = Liquidation::first();
         $liquidation->load(['ammounts','additionals']);

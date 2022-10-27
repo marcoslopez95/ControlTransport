@@ -118,8 +118,15 @@ class Liquidation extends CrudModel
     }
 
     /**
+     * get the passengers for the Liquidation
+     */
+    public function passengers(){
+        return $this->hasMany(Passenger::class);
+    }
+
+    /**
      * Get the coin that owns the Liquidation
-     *
+     *serían un genial serían un genial 
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function coin()

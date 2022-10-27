@@ -60,8 +60,11 @@ class LiquidationService extends CrudService
 
         $request['status'] = $request->falta != 0 ? 'Por Pagar' : 'Pagada';
         $data_liquidation = $request->except(['ammounts','additionals']);
-
+    
         $liquidation   = $this->repository->_store($data_liquidation);
+
+        $liquidation->passengers()->create($request->passengers);
+
         $request['id'] = $liquidation->id;
         $this->repository->saveAdditionals($liquidation->id,$request->only('additionals'));
         $this->repository->saveAmount($liquidation->id,$request->only('ammounts'));
@@ -112,7 +115,7 @@ class LiquidationService extends CrudService
     {
         $liquidations = $this->repository->_index($request);
 
-        $liquidations->load(['additionals','ammounts.coin','vehicle','coin']);
+        $liquidations->load(['additionals','ammounts.coin','vehicle','coin','passengers']);
 
         $liquidations->transform(function($item,$value){
             $oficina_origen = Office::find($item->office_origin);
@@ -134,7 +137,7 @@ class LiquidationService extends CrudService
         $liquidation['name_office_origin'] = $oficina_origen->name;
         $liquidation['name_office_destiny'] = $oficina_destino->name;
 
-        $liquidation->load(['additionals.coin','ammounts.coin','vehicle','coin']);
+        $liquidation->load(['additionals.coin','ammounts.coin','vehicle','coin','passengers']);
 
         foreach($liquidation->additionals as $additional){
             unset($additional['pivot']);
